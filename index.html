@@ -305,6 +305,9 @@ textarea{width:100%;min-height:100px;border:1px solid var(--line);border-radius:
 .coq{margin-top:12px}
 .coq .chips{margin-top:6px}
 .coq details{margin-top:6px}
+.pp .pp-code{font:13px/1.45 var(--font-mono,ui-monospace,monospace);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto;white-space:pre;tab-size:4;max-width:100%}
+.pp .pp-chip small{color:var(--muted);margin-left:4px}
+.pp .pp-link{color:var(--accent);text-decoration:underline;overflow-wrap:anywhere}
 
 </style>
 </head>
@@ -7317,6 +7320,1136 @@ twists:[
 ]});
 })();
 
+/* DSA toolkit data: data structures, techniques, signals, size limits. Reference material written for this lab. */
+E.dsa={
+ds:[
+{id:'array',name:`Array / dynamic array`,tag:`Basic`,
+ ops:[[`Access by index`,`O(1)`],[`Append`,`O(1) amortized`],[`Insert / delete in the middle`,`O(n)`],[`Search, unsorted`,`O(n)`],[`Search, sorted`,`O(log n) by binary search`]],
+ use:[`Default choice. Fast, compact, cache friendly.`,`Index is the key (counting, DP tables, buckets).`],
+ avoid:[`Frequent inserts or deletes in the middle.`,`Need fast lookup by value (use a hash map).`],
+ lib:`C++ vector. Java/Kotlin ArrayList.`,
+ trap:`Append is amortized O(1): an occasional resize costs O(n). Erasing from the front of a vector is O(n).`,
+ probs:['two-sum','maximum-subarray','product-of-array-except-self','rotate-image','spiral-matrix']},
+{id:'list',name:`Linked list`,tag:`Basic`,
+ ops:[[`Insert / delete at a known node`,`O(1)`],[`Access by index`,`O(n)`],[`Search`,`O(n)`]],
+ use:[`Splicing and reordering in place (LRU with a hash map).`,`Interview problems about pointer manipulation.`],
+ avoid:[`Almost everywhere in real code: slow to traverse, poor cache use.`,`Anything needing random access.`],
+ lib:`C++ list, forward_list. Java LinkedList (rarely worth it).`,
+ trap:`Use a dummy head to avoid special cases. Fast and slow pointers find cycles and middles.`,
+ probs:['reverse-linked-list','merge-two-sorted-lists','linked-list-cycle','lru-cache','reorder-list']},
+{id:'hash',name:`Hash map / hash set`,tag:`Core`,
+ ops:[[`Insert, lookup, delete`,`O(1) average, O(n) worst`],[`Iterate in order`,`not supported`],[`Build from n items`,`O(n)`]],
+ use:[`Lookup by value: pairs, duplicates, frequency, grouping.`,`Trade space for time: store what you have seen.`],
+ avoid:[`Need sorted order, floor or ceiling (use an ordered map).`,`Keys that are hard to hash (a pair in C++ needs a custom hash).`],
+ lib:`C++ unordered_map / unordered_set. Java/Kotlin HashMap / HashSet.`,
+ trap:`O(1) is an average. Say so. A sorted key or a counting array beats it when keys are small integers or letters.`,
+ probs:['two-sum','contains-duplicate','group-anagrams','longest-consecutive-sequence','top-k-frequent-elements']},
+{id:'stack',name:`Stack`,tag:`Core`,
+ ops:[[`Push, pop, peek`,`O(1)`]],
+ use:[`Matching brackets, undo, backtracking by hand, expression evaluation.`,`Monotonic stack: next greater or smaller element.`],
+ avoid:[`Need the oldest item first (queue).`],
+ lib:`C++ stack or vector. Java/Kotlin ArrayDeque (not the old Stack class).`,
+ trap:`A recursion is a stack too. Deep recursion on a skewed tree can overflow, so mention an iterative version.`,
+ probs:['valid-parentheses','min-stack','daily-temperatures','largest-rectangle-in-histogram']},
+{id:'queue',name:`Queue / deque`,tag:`Core`,
+ ops:[[`Push and pop at either end of a deque`,`O(1)`],[`Access in the middle`,`O(1) for std::deque, not for a linked queue`]],
+ use:[`BFS and level order.`,`Sliding window with a monotonic deque (window maximum).`,`Rolling windows of recent events (rate limiter).`],
+ avoid:[`Need priorities (heap).`],
+ lib:`C++ queue, deque. Java/Kotlin ArrayDeque.`,
+ trap:`Process level by level by taking the queue size before the loop.`,
+ probs:['binary-tree-level-order-traversal','rotting-oranges','sliding-window-maximum','sliding-window-rate-limiter']},
+{id:'heap',name:`Heap / priority queue`,tag:`Core`,
+ ops:[[`Push, pop`,`O(log n)`],[`Peek the min or max`,`O(1)`],[`Build from n items`,`O(n)`],[`Delete an arbitrary item`,`O(n), or lazy deletion`]],
+ use:[`Repeatedly need the smallest or largest: k-th largest, merge k lists, scheduling, Dijkstra.`,`Streaming median with two heaps.`],
+ avoid:[`Need to search or iterate in order (ordered map).`,`Only need the top once: quickselect or sorting may do.`],
+ lib:`C++ priority_queue (max-heap by default). Java/Kotlin PriorityQueue (min-heap by default).`,
+ trap:`Top k largest uses a min-heap of size k: O(n log k). Mixing up min and max heap defaults is the usual bug.`,
+ probs:['kth-largest-element-in-an-array','merge-k-sorted-lists','find-median-from-data-stream','task-scheduler','network-delay-time']},
+{id:'tree',name:`Ordered map / balanced BST`,tag:`Core`,
+ ops:[[`Insert, delete, search`,`O(log n)`],[`Floor, ceiling, range query`,`O(log n)`],[`Iterate in sorted order`,`O(n)`]],
+ use:[`Need sorted keys with dynamic updates: nearest value, intervals, calendar booking.`,`When a heap is too weak (you need to remove arbitrary items or find neighbours).`],
+ avoid:[`Only lookup by key (hash map is faster).`],
+ lib:`C++ set, map (lower_bound, upper_bound). Java/Kotlin TreeMap, TreeSet.`,
+ trap:`A plain BST is O(h): O(n) if skewed. State that you would use a balanced one (red-black, AVL).`,
+ probs:['validate-binary-search-tree','kth-smallest-element-in-a-bst','lowest-common-ancestor-of-a-binary-search-tree','time-based-key-value-store']},
+{id:'trie',name:`Trie`,tag:`Specialised`,
+ ops:[[`Insert, search, prefix check`,`O(L), L = word length`],[`Space`,`O(total characters), can be large`]],
+ use:[`Many words, prefix queries, autocomplete, word search on a board.`,`Pruning a search when no word starts with the current prefix.`],
+ avoid:[`Few words or only exact lookup (hash set).`],
+ lib:`Write your own: array of 26 children or a hash map per node.`,
+ trap:`Memory is the cost. Mark the end of a word separately from the node.`,
+ probs:['implement-trie-prefix-tree','design-add-and-search-words-data-structure','word-search-ii']},
+{id:'dsu',name:`Union-Find (disjoint set)`,tag:`Specialised`,
+ ops:[[`Find, union`,`near O(1) (inverse Ackermann) with path compression and union by size`],[`Space`,`O(n)`]],
+ use:[`Groups that only merge: connected components, cycle in an undirected graph, Kruskal.`,`Offline connectivity and dynamic "are these joined?" queries.`],
+ avoid:[`Need to split groups or remove edges.`,`Need paths, not just connectivity (use BFS or DFS).`],
+ lib:`Write your own: parent array plus size array.`,
+ trap:`Without both optimizations it can degrade to O(n) per find. Say both by name.`,
+ probs:['redundant-connection','number-of-islands-ii','satisfiability-of-equality-equations','number-of-connected-components-in-an-undirected-graph','graph-valid-tree']},
+{id:'fenwick',name:`Fenwick tree and segment tree`,tag:`Specialised`,
+ ops:[[`Point update, prefix or range query`,`O(log n)`],[`Build`,`O(n)`],[`Segment tree space`,`about 4n`]],
+ use:[`Array that changes while you query sums or counts: range sum with updates, counting smaller elements.`,`Fenwick is shorter to write. Use a segment tree for min, max or range updates (lazy).`],
+ avoid:[`Array never changes (prefix sums are enough).`],
+ lib:`Write your own.`,
+ trap:`Fenwick is 1-indexed. Compare it with plain prefix sums first: if there are no updates, use those.`,
+ probs:['range-sum-query-mutable','count-of-smaller-numbers-after-self']},
+{id:'graph',name:`Graph representations`,tag:`Core`,
+ ops:[[`Adjacency list: space`,`O(V + E)`],[`Adjacency list: iterate neighbours`,`O(degree)`],[`Adjacency matrix: space`,`O(V²)`],[`Adjacency matrix: is there an edge?`,`O(1)`]],
+ use:[`Adjacency list almost always (sparse graphs, BFS, DFS, Dijkstra).`,`Matrix only when the graph is dense, small, or you need O(1) edge checks.`,`Edge list for Kruskal and Bellman-Ford.`],
+ avoid:[`A matrix for a large sparse graph.`],
+ lib:`C++ vector<vector<int>>, or vector<vector<pair<int,int>>> for weights.`,
+ trap:`A grid is an implicit graph: do not build edges, use direction arrays. Directed or undirected changes cycle detection.`,
+ probs:['number-of-islands','clone-graph','course-schedule','word-ladder']}
+],
+tech:[
+{id:'hashing',name:`Hashing and counting`,tag:`Array`,
+ sig:[`Pair or complement lookup`,`Duplicates, frequency, anagrams`,`Group by a canonical key`],
+ idea:`Store what you have seen so each later item is answered in O(1). Often turns O(n²) into O(n).`,
+ cost:`O(n) time, O(n) space`,
+ trap:`Count into an array of 26 or 256 when the alphabet is fixed. Decide what the key is before coding.`,
+ probs:['two-sum','contains-duplicate','valid-anagram','group-anagrams','longest-consecutive-sequence','top-k-frequent-elements']},
+{id:'twoptr',name:`Two pointers`,tag:`Array`,
+ sig:[`Sorted array and a pair or triple`,`Compare from both ends (palindrome, container)`,`In-place removal or partition`],
+ idea:`Move two indices toward each other or in the same direction. Each move discards options safely, so the whole scan is linear.`,
+ cost:`O(n) after an O(n log n) sort`,
+ trap:`Say why moving that pointer cannot lose the answer. Skip duplicates for triples.`,
+ probs:['three-sum','container-with-most-water','valid-palindrome','trapping-rain-water','partition-labels']},
+{id:'window',name:`Sliding window`,tag:`Array`,
+ sig:[`Longest or shortest contiguous subarray or substring`,`A constraint that breaks when the window grows`,`At most k distinct, no repeats, a budget`],
+ idea:`Grow the right edge, shrink the left edge while the window is invalid. Each element enters and leaves once.`,
+ cost:`O(n) time, O(alphabet) space`,
+ trap:`It needs a window you can undo item by item. Negative numbers usually break it (use prefix sums).`,
+ probs:['longest-substring-without-repeating-characters','longest-repeating-character-replacement','minimum-window-substring','sliding-window-maximum']},
+{id:'prefix',name:`Prefix sums and running state`,tag:`Array`,
+ sig:[`Many range-sum queries`,`Subarray with sum k (prefix plus hash map)`,`Product or total except self`],
+ idea:`Precompute cumulative results so any range answer is a subtraction. Running best-so-far (Kadane) is the same idea.`,
+ cost:`O(n) build, O(1) per query`,
+ trap:`Off-by-one at the start: use a leading zero. If the array changes between queries use a Fenwick tree.`,
+ probs:['product-of-array-except-self','maximum-subarray','best-time-to-buy-and-sell-stock','maximum-product-subarray']},
+{id:'bsearch',name:`Binary search`,tag:`Search`,
+ sig:[`Sorted or rotated data`,`"Minimum value that works" or "maximum that fits" (search on the answer)`,`A yes/no check that flips once`],
+ idea:`Halve the range each step. For search on the answer, binary search the value and test it with a fast check.`,
+ cost:`O(log n), or O(log range × cost of check)`,
+ trap:`Fix the loop invariant first (lo, hi, mid, and which side moves). Use lo + (hi - lo) / 2 to avoid overflow.`,
+ probs:['find-minimum-in-rotated-sorted-array','search-in-rotated-sorted-array','koko-eating-bananas','time-based-key-value-store','median-of-two-sorted-arrays']},
+{id:'mono',name:`Monotonic stack and deque`,tag:`Array`,
+ sig:[`Next greater or smaller element`,`Nearest bar that is shorter`,`Maximum of every window`],
+ idea:`Keep candidates in sorted order and pop the ones that can never be the answer again. Each item is pushed and popped once.`,
+ cost:`O(n) time, O(n) space`,
+ trap:`Decide increasing or decreasing and what you store (value or index). Store indices when you need distances.`,
+ probs:['daily-temperatures','largest-rectangle-in-histogram','sliding-window-maximum','valid-parentheses']},
+{id:'ptrs',name:`Linked list pointer tricks`,tag:`List`,
+ sig:[`Cycle, middle, or the k-th from the end`,`Reverse, merge, or reorder in place`],
+ idea:`Fast and slow pointers, a gap between two pointers, a dummy head, or three pointers while reversing.`,
+ cost:`O(n) time, O(1) space`,
+ trap:`Save next before overwriting a pointer. Test empty, one node and two nodes.`,
+ probs:['reverse-linked-list','merge-two-sorted-lists','linked-list-cycle','remove-nth-node-from-end-of-list','reorder-list']},
+{id:'intervals',name:`Intervals: sort and sweep`,tag:`Greedy`,
+ sig:[`Merge, insert or count overlaps`,`Minimum rooms, minimum removals, minimum arrows`],
+ idea:`Sort by start to merge. Sort by end for "most that fit" (greedy). Use a heap or a sweep of start and end events to count concurrent items.`,
+ cost:`O(n log n)`,
+ trap:`Decide whether touching intervals overlap. Sort key is the whole trick.`,
+ probs:['merge-intervals','insert-interval','non-overlapping-intervals','meeting-rooms-ii','minimum-number-of-arrows-to-burst-balloons']},
+{id:'topk',name:`Heap and top-k`,tag:`Heap`,
+ sig:[`k-th largest, top k, k closest`,`Merge k sorted streams`,`Median of a stream`],
+ idea:`Keep only what matters in a heap of size k, or two heaps split at the median.`,
+ cost:`O(n log k) time, O(k) space`,
+ trap:`Quickselect gives O(n) average but O(n²) worst. A heap is the safe answer under streaming input.`,
+ probs:['kth-largest-element-in-an-array','merge-k-sorted-lists','find-median-from-data-stream','top-k-frequent-elements','task-scheduler']},
+{id:'treetrav',name:`Tree recursion and traversal`,tag:`Tree`,
+ sig:[`Anything on a binary tree`,`Answer built from the left and right subtrees`,`Level by level`],
+ idea:`Define what the recursive call returns and what you update globally. Pre-order passes info down, post-order returns info up, BFS goes by level.`,
+ cost:`O(n) time, O(h) space`,
+ trap:`h can be n on a skewed tree. Pass down ranges for BST validation, not just the parent.`,
+ probs:['maximum-depth-of-binary-tree','validate-binary-search-tree','lowest-common-ancestor-of-a-binary-tree','binary-tree-maximum-path-sum','diameter-of-binary-tree','binary-tree-level-order-traversal']},
+{id:'graphsearch',name:`BFS and DFS on graphs`,tag:`Graph`,
+ sig:[`Connected groups, flood fill, grids`,`Fewest steps in an unweighted graph (BFS)`,`Cycle detection, all paths`],
+ idea:`BFS explores by distance with a queue. DFS goes deep with recursion or a stack. Mark visited when you enqueue.`,
+ cost:`O(V + E)`,
+ trap:`Mark visited at the right time or a node enters the queue many times. Directed and undirected cycle checks differ.`,
+ probs:['number-of-islands','rotting-oranges','pacific-atlantic-water-flow','word-ladder','clone-graph']},
+{id:'topo',name:`Topological sort`,tag:`Graph`,
+ sig:[`Prerequisites and dependencies`,`Build order, ordering from constraints`],
+ idea:`Kahn: repeatedly take nodes with no incoming edges. If you cannot take them all, there is a cycle.`,
+ cost:`O(V + E)`,
+ trap:`The order is not unique unless stated. Cycle means impossible.`,
+ probs:['course-schedule','alien-dictionary']},
+{id:'shortest',name:`Shortest paths`,tag:`Graph`,
+ sig:[`Weighted edges and the cheapest route`,`Limited number of stops`,`A path costs its largest step`],
+ idea:`Dijkstra with a min-heap for non-negative weights. Bellman-Ford for negative edges or a limit on edges. BFS when all edges cost the same.`,
+ cost:`Dijkstra O((V + E) log V). Bellman-Ford O(V × E).`,
+ trap:`Dijkstra breaks with negative edges. Skip stale heap entries.`,
+ probs:['network-delay-time','path-with-minimum-effort','cheapest-flights-within-k-stops']},
+{id:'dsu2',name:`Union-Find`,tag:`Graph`,
+ sig:[`Groups that merge over time`,`Does this edge close a cycle?`,`Count components as edges arrive`],
+ idea:`Join sets as you read edges. An edge whose ends already share a root closes a cycle.`,
+ cost:`about O(n) total for n unions`,
+ trap:`Path compression plus union by size. Process equalities before inequalities.`,
+ probs:['redundant-connection','number-of-islands-ii','satisfiability-of-equality-equations','graph-valid-tree','number-of-connected-components-in-an-undirected-graph']},
+{id:'backtrack',name:`Backtracking`,tag:`Search`,
+ sig:[`Generate all subsets, permutations, combinations`,`Place pieces with constraints (N-Queens)`,`Find a path in a board`],
+ idea:`Choose, explore, un-choose. Prune as soon as a partial answer cannot work.`,
+ cost:`Exponential: about O(2^n) for subsets, O(n!) for permutations`,
+ trap:`Copy the path when saving a result. Sort and skip repeated values at the same level to avoid duplicates.`,
+ probs:['subsets','permutations','combination-sum','n-queens','word-search','generate-parentheses','subsets-ii']},
+{id:'dp',name:`Dynamic programming`,tag:`DP`,
+ sig:[`Count ways, or find the best value`,`Choices that repeat the same subproblem`,`"Can we reach / build this?"`],
+ idea:`Write the state, the transition, the base case and the order. Then shrink the memory (keep only the last row).`,
+ cost:`Number of states × work per state`,
+ trap:`Start from brute force recursion, add memo, then convert to a table. Name the state in words before writing code.`,
+ probs:['climbing-stairs','house-robber','coin-change','longest-increasing-subsequence','word-break','decode-ways','partition-equal-subset-sum','longest-common-subsequence','edit-distance','burst-balloons','best-time-to-buy-and-sell-stock-with-cooldown','best-time-to-buy-and-sell-stock-iv','house-robber-ii','house-robber-iii','unique-paths','palindromic-substrings','longest-palindromic-substring']},
+{id:'greedy',name:`Greedy`,tag:`Greedy`,
+ sig:[`Make the best local choice and never look back`,`Sorting first then a single scan`,`Intervals, scheduling, jump reach`],
+ idea:`Pick a rule and prove it with an exchange argument: swapping any other choice for yours cannot make the answer worse.`,
+ cost:`usually O(n log n) for the sort, then O(n)`,
+ trap:`Greedy fails on coin change with odd coins. If you cannot argue why it is safe, check with DP.`,
+ probs:['jump-game','gas-station','candy','non-overlapping-intervals','best-time-to-buy-and-sell-stock-ii','task-scheduler']},
+{id:'bits',name:`Bit manipulation`,tag:`Bits`,
+ sig:[`Find the single or missing number`,`Count or toggle bits, flags in a mask`,`Add without plus`],
+ idea:`XOR cancels pairs. n & (n - 1) clears the lowest set bit. Shifts multiply and divide by powers of two.`,
+ cost:`O(1) or O(bits)`,
+ trap:`Watch signed shifts and overflow. In C++ use unsigned for bit tricks.`,
+ probs:['number-of-1-bits','counting-bits','missing-number','sum-of-two-integers','reverse-bits']},
+{id:'design',name:`Combine structures (design)`,tag:`Design`,
+ sig:[`Cache with O(1) get and put`,`Undo, history, recent events`,`Fixed-time operations with ordering`],
+ idea:`One structure for lookup (hash map), another for order (list, heap, deque). Keep both in sync.`,
+ cost:`O(1) per operation when both parts are O(1)`,
+ trap:`Every operation must update both structures. Draw the invariants first.`,
+ probs:['lru-cache','lfu-cache','min-stack','browser-history','hit-counter','event-bus','text-editor-undo-redo']}
+],
+signals:[
+[`Sorted array, find a pair or triple`,`Two pointers`,`Each move discards options, O(n)`],
+[`Subarray or substring, longest or shortest`,`Sliding window`,`Window grows and shrinks once per item`],
+[`Many range sum queries`,`Prefix sums`,`O(1) per query`],
+[`Need O(1) lookup of something seen before`,`Hash map or set`,`Trade space for time`],
+[`k-th largest, top k, merge k sorted`,`Heap`,`O(n log k)`],
+[`Next greater or smaller element`,`Monotonic stack`,`Each item pushed and popped once`],
+[`Sorted data, or an answer that flips from no to yes`,`Binary search (maybe on the answer)`,`O(log n) steps`],
+[`Fewest steps in an unweighted graph or grid`,`BFS`,`Explores by distance`],
+[`Connected groups, flood fill, cycle in an undirected graph`,`DFS or Union-Find`,`O(V + E) or near linear`],
+[`Dependencies, prerequisites, build order`,`Topological sort`,`Cycle means impossible`],
+[`Weighted shortest path`,`Dijkstra (no negatives) or Bellman-Ford`,`Min-heap, or edge limit`],
+[`Merge or schedule intervals`,`Sort, then sweep or greedy`,`Sort key is the trick`],
+[`All subsets, permutations, placements`,`Backtracking`,`Exponential, prune early`],
+[`Count ways or best value, with repeating subproblems`,`Dynamic programming`,`States × transition cost`],
+[`Local choice provably safe`,`Greedy`,`Sort once, scan once`],
+[`Prefix lookups, many words`,`Trie`,`O(L) per word`],
+[`Merges only, ask if joined`,`Union-Find`,`Near O(1) per operation`],
+[`Updates and range queries together`,`Fenwick or segment tree`,`O(log n) both`],
+[`Sorted keys with inserts, need neighbours`,`Ordered map (TreeMap, std::set)`,`O(log n), floor and ceiling`],
+[`O(1) cache with eviction order`,`Hash map plus linked list`,`Both parts O(1)`],
+[`Every pair appears twice except one`,`XOR`,`Pairs cancel`],
+[`Median or middle of a stream`,`Two heaps`,`Max-heap below, min-heap above`]
+],
+limits:[
+[`n up to 10 to 12`,`O(n!)`,`permutations, full backtracking`],
+[`n up to 20 to 25`,`O(2^n)`,`subsets, bitmask DP`],
+[`n up to 500`,`O(n³)`,`triple loops, Floyd-Warshall`],
+[`n up to 5,000`,`O(n²)`,`2-D DP, pair loops`],
+[`n up to 10^5 to 10^6`,`O(n log n)`,`sort, heap, binary search per item`],
+[`n up to 10^7 to 10^8`,`O(n)`,`one pass, hashing`],
+[`n above 10^9`,`O(log n) or O(1)`,`math, binary search on the answer`]
+],
+sorts:[
+[`Quick sort`,`O(n log n)`,`O(n²)`,`no`,`Fast in practice, in place. Random pivot.`],
+[`Merge sort`,`O(n log n)`,`O(n log n)`,`yes`,`Needs O(n) extra space. Good for linked lists.`],
+[`Heap sort`,`O(n log n)`,`O(n log n)`,`no`,`In place. Rarely used directly.`],
+[`Counting / bucket / radix`,`O(n + k)`,`depends on k`,`yes`,`Small integer range or fixed-size keys.`],
+[`std::sort / Collections.sort`,`O(n log n)`,`O(n log n)`,`C++ no, Java yes`,`Use the library. Know the guarantee: C++ sort is introsort.`]
+],
+pitfalls:[
+`Building a string with += in a loop can be O(n²). Use a builder or a list.`,
+`Copying a substring or a slice costs O(length). Pass indices instead.`,
+`Recursion uses stack space. DFS on a path of n nodes is O(n) space.`,
+`Hash map O(1) is average. Name the worst case if asked.`,
+`Amortized O(1) (append, union-find) is not the cost of every single call.`,
+`Say both time and space, and say what n is (nodes, edges, length of the word).`,
+`A sorted input often hides an O(n) or O(log n) answer. Ask if it is sorted.`,
+`Check the limits before choosing: n = 10^5 with an O(n²) idea will time out.`
+]
+};
+
+/* Mini-lessons for the DSA toolkit. Every C++ template was compiled (g++ -std=c++17 -Wall) and run against tests before inclusion. */
+E.dsa.lessons={
+"hashing": {
+"intuition": "Remember what you have already seen, so every new item can be answered by one lookup instead of a scan. The key you choose is the whole design.",
+"code": "vector<int> twoSum(const vector<int>& a, int target) {\n    unordered_map<int,int> seen;              // value -> index\n    for (int i = 0; i < (int)a.size(); i++) {\n        auto it = seen.find(target - a[i]);   // look BEFORE inserting a[i]\n        if (it != seen.end()) return {it->second, i};\n        seen[a[i]] = i;\n    }\n    return {};\n}",
+"example": "a = [2,7,11,15], target 9. i=0: need 7, not seen, store 2. i=1: need 2, seen at index 0, return [0,1].",
+"variants": [
+"Count pairs: add to a counter instead of returning.",
+"Anagrams or grouping: the key is the sorted string, or a 26-count vector.",
+"Sorted input: two pointers uses no extra space.",
+"Trap: check for the complement before inserting, so a number never pairs with itself."
+]
+},
+"twoptr": {
+"intuition": "Two indices walk toward each other (or the same way). Each step throws away a whole set of options for sure, so one pass is enough.",
+"code": "vector<vector<int>> threeSum(vector<int> a) {\n    sort(a.begin(), a.end());\n    vector<vector<int>> res;\n    int n = a.size();\n    for (int i = 0; i < n - 2; i++) {\n        if (i > 0 && a[i] == a[i-1]) continue;          // skip repeated first value\n        int l = i + 1, r = n - 1;\n        while (l < r) {\n            long long s = (long long)a[i] + a[l] + a[r];\n            if (s < 0) l++;                              // need a bigger sum\n            else if (s > 0) r--;                         // need a smaller sum\n            else {\n                res.push_back({a[i], a[l], a[r]});\n                l++; r--;\n                while (l < r && a[l] == a[l-1]) l++;     // skip repeated second value\n            }\n        }\n    }\n    return res;\n}",
+"example": "sorted [-1,-1,0,1,2]. Fix i=0 (-1): l=1, r=4 gives -1-1+2=0, record. Move both: l=2, r=3 gives -1+0+1=0, record. i=1 repeats i=0, skip.",
+"variants": [
+"Pair in a sorted array: same loop without the outer for.",
+"Container with most water: move the shorter wall inward.",
+"Palindrome check: l and r compare, then move together.",
+"Trap: sort first, and skip duplicates at every level."
+]
+},
+"window": {
+"intuition": "Grow the right edge, and while the window breaks the rule, shrink from the left. Every item enters once and leaves once, so it is O(n).",
+"code": "int lengthOfLongestSubstring(const string& s) {\n    vector<int> cnt(256, 0);\n    int best = 0, l = 0;\n    for (int r = 0; r < (int)s.size(); r++) {\n        cnt[(unsigned char)s[r]]++;\n        while (cnt[(unsigned char)s[r]] > 1)             // window invalid: repeated character\n            cnt[(unsigned char)s[l++]]--;\n        best = max(best, r - l + 1);                     // window valid here\n    }\n    return best;\n}",
+"example": "s = abcabcbb. r=0..2 grows to abc (3). r=3 adds a, a appears twice, l moves past the first a, window bca (3). It never beats 3, so the answer is 3.",
+"variants": [
+"Shortest window that satisfies a rule: shrink while valid, record the minimum inside the loop.",
+"At most k distinct: track a count map, shrink while distinct > k.",
+"Fixed size k: no inner loop, drop the item that falls off the left.",
+"Trap: negative numbers break the shrink logic. Use prefix sums instead."
+]
+},
+"prefix": {
+"intuition": "Store running totals so any range sum is a subtraction. Combined with a hash map of earlier totals, it finds subarrays with a target sum in one pass.",
+"code": "int subarraySum(const vector<int>& a, int k) {\n    unordered_map<long long,int> seen{{0, 1}};          // prefix sum -> how many times\n    long long sum = 0;\n    int count = 0;\n    for (int x : a) {\n        sum += x;\n        auto it = seen.find(sum - k);                    // a start whose prefix = sum - k\n        if (it != seen.end()) count += it->second;\n        seen[sum]++;\n    }\n    return count;\n}",
+"example": "a = [1,2,3], k = 3. sum 1: need -2, no. sum 3: need 0, found once, count 1 (the subarray [1,2]). sum 6: need 3, found once, count 2 (the subarray [3]).",
+"variants": [
+"Range sum queries on a fixed array: build prefix[i+1] = prefix[i] + a[i], answer prefix[r+1] - prefix[l].",
+"Product except self: prefix and suffix products.",
+"Max subarray (Kadane): running best ending here.",
+"Trap: seed the map with {0:1} or you miss subarrays that start at index 0."
+]
+},
+"bsearch": {
+"intuition": "If a yes/no question flips exactly once as the value grows, you can halve the range each step. This works on sorted arrays and on answers (smallest speed that works).",
+"code": "// smallest x in [lo, hi] with ok(x) true; ok must go false...false,true...true; ok(hi) must be true\nint firstTrue(int lo, int hi, function<bool(int)> ok) {\n    while (lo < hi) {\n        int mid = lo + (hi - lo) / 2;                    // no overflow\n        if (ok(mid)) hi = mid;                           // mid may be the answer: keep it\n        else lo = mid + 1;                               // mid is too small: drop it\n    }\n    return lo;\n}\n\nint minEatingSpeed(const vector<int>& piles, int h) {\n    int hi = *max_element(piles.begin(), piles.end());\n    return firstTrue(1, hi, [&](int k) {\n        long long hours = 0;\n        for (int p : piles) hours += (p + k - 1) / k;    // ceil(p / k)\n        return hours <= h;\n    });\n}",
+"example": "piles [3,6,7,11], h = 8. Search speeds 1..11. mid=6 works, hi=6. mid=3 fails, lo=4. mid=5 works, hi=5. mid=4 works, hi=4. Answer 4.",
+"variants": [
+"Plain search in a sorted array: ok(mid) is a[mid] >= target.",
+"Rotated array: decide which half is sorted, then check the target against it.",
+"Maximise instead: flip the test and move lo = mid + 1 with mid = lo + (hi - lo + 1) / 2.",
+"Trap: write down the invariant (what lo and hi mean) before coding. Off-by-one is the main bug."
+]
+},
+"mono": {
+"intuition": "Keep a stack whose values stay sorted. When a new item beats the top, the top has found its answer and leaves. Each item is pushed once and popped once.",
+"code": "vector<int> dailyTemperatures(const vector<int>& t) {\n    int n = t.size();\n    vector<int> ans(n, 0);\n    vector<int> st;                                      // indices with temperatures falling\n    for (int i = 0; i < n; i++) {\n        while (!st.empty() && t[st.back()] < t[i]) {     // day i is warmer than the waiting day\n            ans[st.back()] = i - st.back();\n            st.pop_back();\n        }\n        st.push_back(i);\n    }\n    return ans;                                          // days left in the stack stay 0\n}",
+"example": "t = [73,74,75,71,69,72,76,73]. 74 answers day 0, 75 answers day 1. 71 and 69 wait. 72 answers 69 (1 day) and 71 (2 days). 76 answers 72 and 75 (4 days). 73 never gets a warmer day.",
+"variants": [
+"Next smaller: flip the comparison.",
+"Histogram rectangle: pop while the bar is taller than the current one, width comes from the new top.",
+"Window maximum: use a deque, pop from the back while smaller, drop from the front when out of the window.",
+"Trap: store indices, not values, when you need distances."
+]
+},
+"ptrs": {
+"intuition": "For lists, use pointers that move at different speeds or with a gap. A dummy head removes the special case for the first node.",
+"code": "struct ListNode { int val; ListNode* next; ListNode(int v) : val(v), next(nullptr) {} };\n\nListNode* reverseList(ListNode* head) {\n    ListNode *prev = nullptr, *cur = head;\n    while (cur) {\n        ListNode* nxt = cur->next;                       // save before overwriting\n        cur->next = prev;\n        prev = cur;\n        cur = nxt;\n    }\n    return prev;\n}\n\nbool hasCycle(ListNode* head) {\n    ListNode *slow = head, *fast = head;\n    while (fast && fast->next) {\n        slow = slow->next;                               // 1 step\n        fast = fast->next->next;                         // 2 steps\n        if (slow == fast) return true;                   // they meet only inside a cycle\n    }\n    return false;\n}",
+"example": "1 -> 2 -> 3. prev=null, cur=1: save 2, point 1 to null, move on. cur=2: point 2 to 1. cur=3: point 3 to 2. Return 3 -> 2 -> 1.",
+"variants": [
+"Middle of the list: slow and fast, slow is the middle when fast ends.",
+"N-th from the end: move fast n steps ahead, then move both.",
+"Merge two sorted lists: dummy head, append the smaller each time.",
+"Trap: test an empty list, one node, and two nodes."
+]
+},
+"intervals": {
+"intuition": "Sort the intervals, then sweep once. Sort by start to merge overlaps. Sort by end when you want the most intervals that fit.",
+"code": "vector<vector<int>> mergeIntervals(vector<vector<int>> v) {\n    sort(v.begin(), v.end());                            // by start\n    vector<vector<int>> out;\n    for (auto& cur : v) {\n        if (!out.empty() && cur[0] <= out.back()[1])     // overlaps the last one\n            out.back()[1] = max(out.back()[1], cur[1]);\n        else\n            out.push_back(cur);\n    }\n    return out;\n}",
+"example": "[[1,3],[8,10],[2,6]] sorts to [1,3],[2,6],[8,10]. 2 <= 3, so merge to [1,6]. 8 > 6, start a new one. Result [[1,6],[8,10]].",
+"variants": [
+"Fewest to remove so none overlap: sort by END, keep an interval if it starts at or after the last end.",
+"Rooms needed: sort starts and ends separately, or use a min-heap of end times.",
+"Insert into a sorted list: copy before, merge the overlaps, copy after.",
+"Trap: decide if touching intervals ([1,2] and [2,3]) count as overlapping."
+]
+},
+"topk": {
+"intuition": "To keep the k best, hold only k items in a heap whose top is the weakest of them. A new item either beats the top or is ignored. It costs O(n log k).",
+"code": "int kthLargest(const vector<int>& a, int k) {\n    priority_queue<int, vector<int>, greater<int>> pq;   // min-heap: top is the smallest kept\n    for (int x : a) {\n        pq.push(x);\n        if ((int)pq.size() > k) pq.pop();                // drop the smallest\n    }\n    return pq.top();                                     // k-th largest\n}",
+"example": "a = [3,2,1,5,6,4], k = 2. The heap holds at most 2 items: after 3,2 add 1 then drop 1. Add 5 drop 2 (holds 3,5). Add 6 drop 3 (holds 5,6). Add 4 drop 4. Top is 5.",
+"variants": [
+"Top k frequent: count with a map, then keep k pairs in the heap by count.",
+"Merge k sorted lists: heap of the current head from each list.",
+"Median of a stream: a max-heap for the low half and a min-heap for the high half.",
+"Trap: C++ priority_queue is a MAX-heap by default. Use greater<int> for a min-heap."
+]
+},
+"treetrav": {
+"intuition": "Decide what the recursive call returns for one subtree, then combine the left and right answers at the node. For levels, use a queue and process its current size.",
+"code": "struct TreeNode { int val; TreeNode *left, *right; TreeNode(int v) : val(v), left(nullptr), right(nullptr) {} };\n\nint maxDepth(TreeNode* r) {\n    return r ? 1 + max(maxDepth(r->left), maxDepth(r->right)) : 0;\n}\n\nvector<vector<int>> levelOrder(TreeNode* root) {\n    vector<vector<int>> res;\n    if (!root) return res;\n    queue<TreeNode*> q;\n    q.push(root);\n    while (!q.empty()) {\n        int sz = q.size();                               // nodes on this level\n        res.emplace_back();\n        while (sz--) {\n            TreeNode* n = q.front(); q.pop();\n            res.back().push_back(n->val);\n            if (n->left) q.push(n->left);\n            if (n->right) q.push(n->right);\n        }\n    }\n    return res;\n}",
+"example": "Tree 3, with children 9 and 20, and 20 has children 15 and 7. Depth is 1 + max(1, 2) = 3. Level order is [3], [9, 20], [15, 7].",
+"variants": [
+"Validate a BST: pass down (low, high) limits, not just the parent.",
+"Diameter or max path sum: return the best DOWNWARD path, update a global with the best path that bends at this node.",
+"Lowest common ancestor: return the node if it is one of the targets or if both sides found something.",
+"Trap: a skewed tree makes the recursion n deep. Mention an iterative version."
+]
+},
+"graphsearch": {
+"intuition": "BFS uses a queue and finds the fewest steps. DFS goes deep with recursion. Mark a node as visited when you add it, so it never enters twice.",
+"code": "vector<int> bfsDist(const vector<vector<int>>& g, int src) {\n    vector<int> d(g.size(), -1);                         // -1 = not visited\n    queue<int> q;\n    d[src] = 0; q.push(src);\n    while (!q.empty()) {\n        int u = q.front(); q.pop();\n        for (int v : g[u])\n            if (d[v] < 0) { d[v] = d[u] + 1; q.push(v); }   // mark when enqueued\n    }\n    return d;\n}\n\nvoid sink(vector<vector<char>>& grid, int r, int c) {    // DFS flood fill\n    if (r < 0 || c < 0 || r >= (int)grid.size() || c >= (int)grid[0].size() || grid[r][c] != '1') return;\n    grid[r][c] = '0';                                    // visited\n    sink(grid, r + 1, c); sink(grid, r - 1, c); sink(grid, r, c + 1); sink(grid, r, c - 1);\n}\nint numIslands(vector<vector<char>> grid) {\n    int islands = 0;\n    for (int r = 0; r < (int)grid.size(); r++)\n        for (int c = 0; c < (int)grid[0].size(); c++)\n            if (grid[r][c] == '1') { islands++; sink(grid, r, c); }\n    return islands;\n}",
+"example": "Edges 0-1, 0-2, 1-3. BFS from 0: distance 0 for node 0, then 1 and 2 at distance 1, then node 3 at distance 2. Result [0,1,1,2].",
+"variants": [
+"Shortest path in a grid: BFS with a direction array, each step costs 1.",
+"Many sources at once (rotting oranges): put all sources in the queue first.",
+"Cycle in a directed graph: DFS with three colours, or use topological sort.",
+"Trap: if you mark visited when you pop instead of when you push, nodes enter the queue many times."
+]
+},
+"topo": {
+"intuition": "Repeatedly take a node that nothing is waiting on, then free the nodes that depended on it. If you cannot take all nodes, there is a cycle.",
+"code": "vector<int> topoOrder(int n, const vector<pair<int,int>>& edges) {   // edge (a,b): a comes before b\n    vector<vector<int>> g(n);\n    vector<int> indeg(n, 0);\n    for (auto& e : edges) { g[e.first].push_back(e.second); indeg[e.second]++; }\n    queue<int> q;\n    for (int i = 0; i < n; i++) if (indeg[i] == 0) q.push(i);\n    vector<int> order;\n    while (!q.empty()) {\n        int u = q.front(); q.pop();\n        order.push_back(u);\n        for (int v : g[u]) if (--indeg[v] == 0) q.push(v);\n    }\n    if ((int)order.size() != n) order.clear();           // cycle: no valid order\n    return order;\n}",
+"example": "n = 4, edges 0->1, 0->2, 1->3, 2->3. In-degrees [0,1,1,2]. Take 0, which frees 1 and 2. Take 1 (3 now needs only 2), take 2 (frees 3), take 3. Order 0,1,2,3.",
+"variants": [
+"Course schedule: can finish if the order has all n courses.",
+"Alien dictionary: build edges from the first differing letter of adjacent words.",
+"Need the order itself (not just yes/no): keep the order vector, as above.",
+"Trap: build the graph from the dependency direction you mean. a before b is an edge a -> b."
+]
+},
+"shortest": {
+"intuition": "Dijkstra always finalises the closest unfinished node, then relaxes its edges. A min-heap picks the closest one. It needs non-negative weights.",
+"code": "vector<long long> dijkstra(int n, const vector<vector<pair<int,int>>>& g, int src) {\n    const long long INF = LLONG_MAX / 4;\n    vector<long long> d(n, INF);\n    d[src] = 0;\n    priority_queue<pair<long long,int>, vector<pair<long long,int>>, greater<>> pq;\n    pq.push({0, src});\n    while (!pq.empty()) {\n        auto [du, u] = pq.top(); pq.pop();\n        if (du > d[u]) continue;                         // stale entry\n        for (auto [v, w] : g[u])\n            if (du + w < d[v]) { d[v] = du + w; pq.push({d[v], v}); }\n    }\n    return d;\n}",
+"example": "Edges 0->1 (4), 0->2 (1), 2->1 (2). Pop node 0: set 1 to 4 and 2 to 1. Pop node 2 (dist 1): 1 + 2 = 3 < 4, so node 1 becomes 3. The old entry (4, node 1) is skipped as stale.",
+"variants": [
+"Path cost is the largest single step: same loop, but the new cost is max(du, w).",
+"Limited number of stops: use Bellman-Ford for k rounds, or add the stop count to the state.",
+"All edges cost 1: plain BFS is enough.",
+"Negative edges: Dijkstra is wrong, use Bellman-Ford."
+]
+},
+"dsu2": {
+"intuition": "Every set has one representative. Find walks to it (and flattens the path). Union joins two representatives. If two nodes already share one, adding the edge makes a cycle.",
+"code": "struct DSU {\n    vector<int> p, sz;\n    DSU(int n) : p(n), sz(n, 1) { iota(p.begin(), p.end(), 0); }\n    int find(int x) { return p[x] == x ? x : p[x] = find(p[x]); }     // path compression\n    bool unite(int a, int b) {\n        a = find(a); b = find(b);\n        if (a == b) return false;                        // already joined: this edge closes a cycle\n        if (sz[a] < sz[b]) swap(a, b);                   // union by size\n        p[b] = a; sz[a] += sz[b];\n        return true;\n    }\n};\n\nvector<int> findRedundantConnection(const vector<vector<int>>& edges) {\n    DSU d(edges.size() + 1);\n    for (auto& e : edges)\n        if (!d.unite(e[0], e[1])) return e;\n    return {};\n}",
+"example": "Edges (1,2), (1,3), (2,3). Joining 1-2 and 1-3 works. For (2,3), find(2) and find(3) both lead to 1, so unite fails: that edge is the redundant one.",
+"variants": [
+"Count components: start with n and subtract 1 for every successful union.",
+"Equality equations: union all equalities first, then check every inequality.",
+"Grid islands that grow over time: union a new land cell with its land neighbours.",
+"Trap: use both path compression and union by size, and say so."
+]
+},
+"backtrack": {
+"intuition": "Build the answer one choice at a time: choose, explore the rest, then undo the choice. To avoid repeats, sort and skip a value equal to the previous one at the same level.",
+"code": "void build(const vector<int>& a, int start, vector<int>& path, vector<vector<int>>& out) {\n    out.push_back(path);                                 // every path is a valid subset\n    for (int i = start; i < (int)a.size(); i++) {\n        if (i > start && a[i] == a[i-1]) continue;       // same value at the same level: skip\n        path.push_back(a[i]);                            // choose\n        build(a, i + 1, path, out);                      // explore\n        path.pop_back();                                 // undo\n    }\n}\nvector<vector<int>> subsetsWithDup(vector<int> a) {\n    sort(a.begin(), a.end());\n    vector<vector<int>> out;\n    vector<int> path;\n    build(a, 0, path, out);\n    return out;\n}",
+"example": "[1,2,2] sorted. Output: [], [1], [1,2], [1,2,2], [2], [2,2]. At the top level the second 2 is skipped, because the first 2 already started those subsets.",
+"variants": [
+"Permutations: use a used[] array, loop over all numbers each level.",
+"Combination sum: allow reuse by recursing with i instead of i + 1.",
+"N-Queens: place one queen per row, keep sets for columns and diagonals.",
+"Trap: add a COPY of the path to the answer, and prune as early as you can."
+]
+},
+"dp": {
+"intuition": "Name the state in words, write how a state is built from smaller ones, set the base case, and fill in order. Then shrink the memory if you can.",
+"code": "int coinChange(const vector<int>& coins, int amount) {\n    const int INF = 1e9;\n    vector<int> dp(amount + 1, INF);                     // dp[a] = fewest coins to make a\n    dp[0] = 0;                                           // base case\n    for (int a = 1; a <= amount; a++)\n        for (int c : coins)\n            if (c <= a && dp[a - c] + 1 < dp[a])\n                dp[a] = dp[a - c] + 1;                   // use one coin c on top of a - c\n    return dp[amount] >= INF ? -1 : dp[amount];\n}\n\nint lcs(const string& a, const string& b) {\n    vector<vector<int>> dp(a.size() + 1, vector<int>(b.size() + 1, 0));   // dp[i][j]: first i of a, first j of b\n    for (size_t i = 1; i <= a.size(); i++)\n        for (size_t j = 1; j <= b.size(); j++)\n            dp[i][j] = a[i-1] == b[j-1] ? dp[i-1][j-1] + 1\n                                        : max(dp[i-1][j], dp[i][j-1]);\n    return dp[a.size()][b.size()];\n}",
+"example": "coins [1,2,5]. dp[0..5] = 0,1,1,2,2,1. For example dp[3] = min(dp[2] + 1, dp[1] + 1) = 2, and dp[5] = dp[0] + 1 = 1. For amount 11 the answer is 3 (5 + 5 + 1).",
+"variants": [
+"Take or skip (house robber): dp[i] = max(dp[i-1], dp[i-2] + x).",
+"Two strings: a table over prefixes (LCS, edit distance).",
+"Knapsack or subset sum: loop the amount downwards when each item is used once.",
+"Trap: write brute force recursion first, add a memo, then convert to a table."
+]
+},
+"greedy": {
+"intuition": "Take the best-looking choice now and never look back. It only works if you can argue that no other choice does better, usually by swapping choices in an optimal answer.",
+"code": "bool canJump(const vector<int>& a) {\n    int far = 0;                                         // farthest index reachable so far\n    for (int i = 0; i < (int)a.size(); i++) {\n        if (i > far) return false;                       // cannot even get to i\n        far = max(far, i + a[i]);\n    }\n    return true;\n}\n\nint eraseOverlapIntervals(vector<vector<int>> v) {       // fewest removals so none overlap\n    sort(v.begin(), v.end(), [](const vector<int>& x, const vector<int>& y) { return x[1] < y[1]; });\n    int removed = 0, end = INT_MIN;\n    for (auto& x : v) {\n        if (x[0] >= end) end = x[1];                     // keep it: earliest finishing wins\n        else removed++;\n    }\n    return removed;\n}",
+"example": "[3,2,1,0,4]. far = 3 after index 0. Indexes 1 to 3 do not push it past 3. At i = 4, i > far, so you can never reach the end: false.",
+"variants": [
+"Gas station: if the tank runs out at i, no start before i works, restart at i + 1.",
+"Task scheduler: always run the most frequent ready task.",
+"Candy: two passes, left to right then right to left.",
+"Trap: if you cannot explain why the local choice is safe, check it against DP on a small case."
+]
+},
+"bits": {
+"intuition": "XOR cancels equal values. n & (n - 1) clears the lowest set bit. Shifts multiply or divide by two. Use unsigned in C++ to avoid signed-shift surprises.",
+"code": "int singleNumber(const vector<int>& a) {                 // every value twice except one\n    int x = 0;\n    for (int v : a) x ^= v;                              // pairs cancel\n    return x;\n}\n\nint popcount(unsigned n) {\n    int c = 0;\n    while (n) { n &= n - 1; c++; }                       // each step removes one set bit\n    return c;\n}\n\nbool isPowerOfTwo(unsigned n) { return n && !(n & (n - 1)); }",
+"example": "[4,1,2,1,2]: 4 ^ 1 ^ 2 ^ 1 ^ 2 = 4 because the 1s and 2s cancel. popcount(13): 1101 -> 1100 -> 1000 -> 0 is 3 steps, so 3 set bits.",
+"variants": [
+"Missing number: XOR indices and values together.",
+"Count bits for 0..n: bits[i] = bits[i >> 1] + (i & 1).",
+"Add without +: sum is a ^ b, carry is (a & b) << 1, repeat.",
+"Trap: in C++ shifting a negative signed number or shifting by 32 or more is undefined."
+]
+},
+"design": {
+"intuition": "Use one structure for fast lookup (hash map) and another for order (linked list). Keep both updated in every operation. LRU is the classic: map to list nodes, newest at the front.",
+"code": "class LRUCache {\n    int cap;\n    list<pair<int,int>> items;                           // front = most recently used\n    unordered_map<int, list<pair<int,int>>::iterator> pos;\npublic:\n    LRUCache(int c) : cap(c) {}\n    int get(int k) {\n        auto it = pos.find(k);\n        if (it == pos.end()) return -1;\n        items.splice(items.begin(), items, it->second);  // move to front in O(1)\n        return it->second->second;\n    }\n    void put(int k, int v) {\n        auto it = pos.find(k);\n        if (it != pos.end()) {\n            it->second->second = v;\n            items.splice(items.begin(), items, it->second);\n            return;\n        }\n        if ((int)items.size() == cap) {                  // evict the least recently used\n            pos.erase(items.back().first);\n            items.pop_back();\n        }\n        items.emplace_front(k, v);\n        pos[k] = items.begin();\n    }\n};",
+"example": "Capacity 2. put 1, put 2, get 1 (1 moves to the front). put 3 evicts 2, the least recently used. get 2 is -1.",
+"variants": [
+"LFU: add a frequency bucket per count, each bucket ordered by recency.",
+"Min stack: keep the running minimum next to each item.",
+"Browser history or undo: two stacks, or an array with a pointer.",
+"Trap: every operation must touch both structures. Draw the invariants first."
+]
+}
+};
+
+/* DSA foundations course. Each C++ build was compiled (g++ -std=c++17 -Wall -Wextra) and run against tests before inclusion.
+   External links were checked to exist on 10 Oct 2026. */
+E.dsa.found=[
+{
+"id": "complexity",
+"title": "Big-O: counting the cost",
+"tag": "Start here",
+"why": "Interviewers compare ideas by how the cost grows with input size n, not by seconds. Big-O is the shorthand: drop constants and smaller terms, keep the part that dominates as n gets large.",
+"how": [
+"Count how many times the innermost statement runs as a function of n. One loop over n is O(n). A loop inside a loop, both over n, is O(n\u00b2).",
+"A loop that halves the range each time (binary search) runs log\u2082 n times: O(log n). 1,000,000 items need only about 20 halvings.",
+"Sorting n items costs O(n log n): log n levels of splitting, each level touching n items.",
+"Amortized cost: a vector doubles its capacity when full. One push is sometimes O(n) (copy everything), but over n pushes the total copies are less than 2n, so the average is O(1).",
+"Space counts too: extra arrays and the recursion stack are memory. A recursion n deep uses O(n) stack."
+],
+"code": "\nlong long loopCost(int n) {          // returns how many times the body ran\n    long long ops = 0;\n    for (int i = 0; i < n; i++) ops++;                     // O(n)\n    for (int i = 0; i < n; i++)\n        for (int j = 0; j < n; j++) ops++;                 // O(n^2)\n    for (int x = n; x > 1; x /= 2) ops++;                  // O(log n)\n    return ops;\n}\n\n// Doubling array: count the copies done by n pushes. It stays below 2n.\nlong long copiesForPushes(int n) {\n    long long copies = 0; int size = 0, cap = 1;\n    for (int i = 0; i < n; i++) {\n        if (size == cap) { copies += size; cap *= 2; }     // grow: copy every element\n        size++;\n    }\n    return copies;\n}\n",
+"cost": "Total of the three parts is n + n\u00b2 + log n, which is O(n\u00b2): the biggest term wins and the others vanish for large n.",
+"mistakes": [
+"Treating O(1) as 'instant'. It means the cost does not grow with n, not that it is free.",
+"Forgetting that a library call can hide a loop (string concatenation, vector insert at the front, substr).",
+"Saying only time. Always add space, and say what n is."
+],
+"practice": [
+"two-sum",
+"contains-duplicate"
+],
+"links": [
+{
+"t": "MIT 6.006 Introduction to Algorithms (free lectures)",
+"u": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/"
+}
+]
+},
+{
+"id": "array",
+"title": "Arrays and the dynamic array",
+"tag": "Basics",
+"why": "An array is memory in one block, so item i is at a fixed distance from the start. That makes access O(1) and scanning fast. A dynamic array (std::vector) adds growth by copying into a bigger block.",
+"how": [
+"Static array: size fixed at creation. Address of a[i] = start + i \u00d7 item size, so no searching is needed.",
+"Dynamic array: keep size (items used) and capacity (space reserved). push_back writes at index size.",
+"When size equals capacity, allocate 2\u00d7 capacity, copy all items, free the old block. That copy is why one push can cost O(n) but the average stays O(1).",
+"Insert or erase in the middle shifts everything after it: O(n).",
+"Arrays are cache friendly, so they are often faster than linked structures even when Big-O looks equal."
+],
+"code": "\nclass MyVector {\n    int* data_;\n    int size_ = 0, cap_ = 1;\npublic:\n    MyVector() : data_(new int[1]) {}\n    ~MyVector() { delete[] data_; }\n    MyVector(const MyVector&) = delete;\n    MyVector& operator=(const MyVector&) = delete;\n\n    void push_back(int x) {\n        if (size_ == cap_) grow();\n        data_[size_++] = x;\n    }\n    void pop_back() { if (size_ > 0) size_--; }\n    int& operator[](int i) { return data_[i]; }         // no bounds check, like std::vector\n    int size() const { return size_; }\n    void insertAt(int i, int x) {                        // O(n): shift right\n        if (size_ == cap_) grow();\n        for (int j = size_; j > i; j--) data_[j] = data_[j-1];\n        data_[i] = x; size_++;\n    }\n    void eraseAt(int i) {                                // O(n): shift left\n        for (int j = i; j + 1 < size_; j++) data_[j] = data_[j+1];\n        size_--;\n    }\nprivate:\n    void grow() {\n        int* bigger = new int[cap_ * 2];\n        for (int i = 0; i < size_; i++) bigger[i] = data_[i];\n        delete[] data_;\n        data_ = bigger; cap_ *= 2;\n    }\n};\n",
+"cost": "push_back: O(1) amortized. Index: O(1). Insert or erase at position i: O(n \u2212 i) shifts. Space: O(capacity), at most 2\u00d7 the items.",
+"mistakes": [
+"Erasing from the front of a vector in a loop: O(n\u00b2) overall.",
+"Keeping a pointer or reference into a vector and then pushing: growth moves the block and the pointer dangles.",
+"Confusing size with capacity."
+],
+"practice": [
+"two-sum",
+"maximum-subarray",
+"rotate-image"
+],
+"links": [
+{
+"t": "VisuAlgo: Array",
+"u": "https://visualgo.net/en/array"
+},
+{
+"t": "William Fiset: Data Structures, 8 hours (YouTube)",
+"u": "https://www.youtube.com/watch?v=RBSGKlAvoiM"
+}
+]
+},
+{
+"id": "list",
+"title": "Linked list",
+"tag": "Basics",
+"why": "A linked list stores each item in its own node with a pointer to the next. Insert and delete at a known place are O(1) because no shifting is needed. The price is that you must walk the chain to find anything.",
+"how": [
+"A node holds a value and a next pointer. The list holds a pointer to the first node (head).",
+"Insert at front: make a node, point it at head, move head to it. O(1).",
+"Insert after a node: rewire two pointers. Order matters: set the new node's next first, then the old node's next.",
+"Delete a value: walk with a pointer to the previous node, then skip over the target. A dummy head node removes the 'delete the first node' special case.",
+"Interview problems are about pointer rewiring, so draw the boxes and arrows for every step."
+],
+"code": "\nstruct Node { int val; Node* next; Node(int v, Node* n = nullptr) : val(v), next(n) {} };\n\nclass MyList {\n    Node* head = nullptr;\npublic:\n    ~MyList() { while (head) { Node* t = head; head = head->next; delete t; } }\n    void pushFront(int x) { head = new Node(x, head); }              // O(1)\n    Node* find(int x) const {                                         // O(n)\n        for (Node* p = head; p; p = p->next) if (p->val == x) return p;\n        return nullptr;\n    }\n    void insertAfter(Node* p, int x) { p->next = new Node(x, p->next); }  // O(1)\n    bool erase(int x) {                                               // O(n)\n        Node dummy(0, head); Node* prev = &dummy;\n        while (prev->next && prev->next->val != x) prev = prev->next;\n        if (!prev->next) return false;\n        Node* t = prev->next; prev->next = t->next; delete t;\n        head = dummy.next;\n        return true;\n    }\n    vector<int> toVector() const { vector<int> v; for (Node* p = head; p; p = p->next) v.push_back(p->val); return v; }\n};\n",
+"cost": "Front insert O(1). Insert after a known node O(1). Find or erase by value O(n). Index access O(n). Space: one pointer extra per item.",
+"mistakes": [
+"Losing the rest of the list by overwriting next before saving it.",
+"Not handling an empty list or a one-node list.",
+"Memory leaks in C++: delete nodes you remove."
+],
+"practice": [
+"reverse-linked-list",
+"merge-two-sorted-lists",
+"linked-list-cycle",
+"remove-nth-node-from-end-of-list"
+],
+"links": [
+{
+"t": "VisuAlgo: Linked List",
+"u": "https://visualgo.net/en/list"
+},
+{
+"t": "William Fiset: Data Structures, 8 hours (YouTube)",
+"u": "https://www.youtube.com/watch?v=RBSGKlAvoiM"
+}
+]
+},
+{
+"id": "stackqueue",
+"title": "Stack and queue",
+"tag": "Basics",
+"why": "A stack gives you the newest item first (last in, first out). A queue gives you the oldest first (first in, first out). Both do their one job in O(1), which is why so many algorithms are built on them.",
+"how": [
+"Stack on an array: keep a size. Push writes at index size and increments. Pop decrements. Top reads size \u2212 1.",
+"Queue on an array: use a circular buffer. Keep head (next to read) and count. Write at (head + count) % capacity, read at head and move head forward with wraparound.",
+"Wraparound with % is what stops the queue from drifting to the end of the array and wasting space.",
+"Stack fits: undo, matching brackets, depth-first search. Queue fits: breadth-first search, scheduling, buffering.",
+"The call stack of your program is a stack too: every recursive call is pushed, every return pops."
+],
+"code": "\nclass MyStack {\n    vector<int> a;\npublic:\n    void push(int x) { a.push_back(x); }\n    int pop() { int x = a.back(); a.pop_back(); return x; }\n    int top() const { return a.back(); }\n    bool empty() const { return a.empty(); }\n};\n\nclass RingQueue {                                        // fixed capacity circular buffer\n    vector<int> buf; int head = 0, count = 0;\npublic:\n    RingQueue(int cap) : buf(cap) {}\n    bool push(int x) {\n        if (count == (int)buf.size()) return false;      // full\n        buf[(head + count) % buf.size()] = x; count++;\n        return true;\n    }\n    int pop() {\n        int x = buf[head];\n        head = (head + 1) % buf.size(); count--;\n        return x;\n    }\n    bool empty() const { return count == 0; }\n    int size() const { return count; }\n};\n",
+"cost": "All operations O(1). The ring queue uses O(capacity) memory and never shifts items.",
+"mistakes": [
+"Popping an empty stack or queue: check empty() first.",
+"Using a vector erase(begin()) as a queue pop: that is O(n).",
+"Forgetting the % wraparound, so the queue runs off the end."
+],
+"practice": [
+"valid-parentheses",
+"min-stack",
+"binary-tree-level-order-traversal",
+"daily-temperatures"
+],
+"links": [
+{
+"t": "USFCA visualization: Stack (array)",
+"u": "https://www.cs.usfca.edu/~galles/visualization/StackArray.html"
+},
+{
+"t": "USFCA visualization: Queue (array)",
+"u": "https://www.cs.usfca.edu/~galles/visualization/QueueArray.html"
+}
+]
+},
+{
+"id": "hash",
+"title": "Hash table",
+"tag": "Core",
+"why": "A hash table finds an item by computing where it lives from its key, so lookup, insert and delete are O(1) on average. It is the most used structure in interviews.",
+"how": [
+"Keep an array of buckets. A hash function turns a key into a number, and index = hash % bucket count.",
+"Two keys can land in the same bucket (a collision). Chaining keeps a small list in each bucket and searches it.",
+"Load factor = items \u00f7 buckets. When it passes about 0.75, double the buckets and re-insert every item (rehash). This keeps chains short.",
+"A good hash spreads keys evenly. With all keys in one bucket the table degrades to a linked list: O(n).",
+"Hash tables do not keep order. Use an ordered map (balanced tree) when you need sorted keys."
+],
+"code": "\nclass MyHashMap {\n    vector<list<pair<int,int>>> buckets;\n    int count = 0;\n    size_t idx(int key, size_t nb) const { return hash<int>()(key) % nb; }\n    void rehash() {\n        vector<list<pair<int,int>>> bigger(buckets.size() * 2);\n        for (auto& b : buckets)\n            for (auto& kv : b) bigger[idx(kv.first, bigger.size())].push_back(kv);\n        buckets.swap(bigger);\n    }\npublic:\n    MyHashMap() : buckets(8) {}\n    void put(int key, int val) {\n        auto& b = buckets[idx(key, buckets.size())];\n        for (auto& kv : b) if (kv.first == key) { kv.second = val; return; }\n        b.push_back({key, val}); count++;\n        if (count * 4 > (int)buckets.size() * 3) rehash();   // load factor above 0.75\n    }\n    bool get(int key, int& out) const {\n        for (auto& kv : buckets[idx(key, buckets.size())])\n            if (kv.first == key) { out = kv.second; return true; }\n        return false;\n    }\n    bool erase(int key) {\n        auto& b = buckets[idx(key, buckets.size())];\n        for (auto it = b.begin(); it != b.end(); ++it)\n            if (it->first == key) { b.erase(it); count--; return true; }\n        return false;\n    }\n    int size() const { return count; }\n};\n",
+"cost": "Average O(1) for put, get, erase. Worst case O(n) if everything collides. Rehash costs O(n) but happens rarely, so it is amortized O(1). Space O(n).",
+"mistakes": [
+"Quoting O(1) without saying 'average'.",
+"Using a floating-point or a mutable object as a key.",
+"In C++, forgetting that pair or vector keys need a custom hash for unordered_map."
+],
+"practice": [
+"two-sum",
+"contains-duplicate",
+"group-anagrams",
+"longest-consecutive-sequence"
+],
+"links": [
+{
+"t": "VisuAlgo: Hash Table",
+"u": "https://visualgo.net/en/hashtable"
+},
+{
+"t": "USFCA visualization: hashing with chaining",
+"u": "https://www.cs.usfca.edu/~galles/visualization/OpenHash.html"
+},
+{
+"t": "USFCA visualization: open addressing",
+"u": "https://www.cs.usfca.edu/~galles/visualization/ClosedHash.html"
+}
+]
+},
+{
+"id": "recursion",
+"title": "Recursion",
+"tag": "Core",
+"why": "Recursion solves a problem by solving a smaller copy of it. Trees, backtracking and dynamic programming all rest on it. If you can state the smaller problem and the stopping case, the code writes itself.",
+"how": [
+"Every recursive function needs a base case (stop) and a recursive case that moves toward it.",
+"Each call gets its own variables on the call stack. A recursion n deep uses O(n) stack space, and a very deep one can overflow.",
+"Trust the recursive call: assume it returns the right answer for the smaller input, then use it to build yours.",
+"Naive recursion can repeat the same subproblem (fib(30) recomputes fib(2) over 800,000 times). Store results in a table (memoization) and each is computed once.",
+"Fast power: x^n = (x^(n/2))\u00b2 (times x if n is odd). The problem halves each call, so it takes O(log n)."
+],
+"code": "\nlong long fibSlow(int n) { return n < 2 ? n : fibSlow(n-1) + fibSlow(n-2); }     // O(2^n)\n\nlong long fibMemo(int n, vector<long long>& memo) {                               // O(n)\n    if (n < 2) return n;\n    if (memo[n] != -1) return memo[n];                                            // already known\n    return memo[n] = fibMemo(n-1, memo) + fibMemo(n-2, memo);\n}\n\nlong long power(long long x, int n) {                                             // O(log n)\n    if (n == 0) return 1;                                                         // base case\n    long long half = power(x, n / 2);\n    return n % 2 ? half * half * x : half * half;\n}\n",
+"cost": "fibSlow is exponential because each call makes two more. fibMemo does the work once per n: O(n) time, O(n) space. power halves n each call: O(log n) time and stack.",
+"mistakes": [
+"No base case, or a base case that is never reached.",
+"Recomputing overlapping subproblems without a memo.",
+"Passing a large structure by value into each call."
+],
+"practice": [
+"climbing-stairs",
+"maximum-depth-of-binary-tree",
+"subsets",
+"generate-parentheses"
+],
+"links": [
+{
+"t": "VisuAlgo: Recursion tree",
+"u": "https://visualgo.net/en/recursion"
+},
+{
+"t": "USFCA visualization: factorial",
+"u": "https://www.cs.usfca.edu/~galles/visualization/RecFact.html"
+}
+]
+},
+{
+"id": "sorting",
+"title": "Sorting: merge sort and quicksort",
+"tag": "Core",
+"why": "Sorting turns many hard problems into easy ones (binary search, two pointers, intervals). You should be able to explain, and write, one O(n log n) sort from memory.",
+"how": [
+"Merge sort: split the array in half, sort each half recursively, then merge two sorted halves with two pointers. Always O(n log n), stable, needs O(n) extra space.",
+"Quicksort: pick a pivot, partition so smaller values are left of it and larger right, then sort each side recursively. Average O(n log n), in place, worst case O(n\u00b2) with bad pivots (random pivot avoids it).",
+"Why n log n: there are about log\u2082 n levels of splitting and each level does O(n) work.",
+"No comparison sort can beat n log n in the worst case. Counting sort beats it when values are small integers (O(n + k)).",
+"In interviews, use the library sort unless asked, and know its guarantee."
+],
+"code": "\nvoid mergeSort(vector<int>& a, int lo, int hi, vector<int>& tmp) {   // sorts a[lo, hi)\n    if (hi - lo < 2) return;\n    int mid = lo + (hi - lo) / 2;\n    mergeSort(a, lo, mid, tmp);\n    mergeSort(a, mid, hi, tmp);\n    int i = lo, j = mid, k = lo;\n    while (i < mid && j < hi) tmp[k++] = a[i] <= a[j] ? a[i++] : a[j++];   // <= keeps it stable\n    while (i < mid) tmp[k++] = a[i++];\n    while (j < hi)  tmp[k++] = a[j++];\n    for (k = lo; k < hi; k++) a[k] = tmp[k];\n}\n\nvoid quickSort(vector<int>& a, int lo, int hi) {                     // sorts a[lo, hi]\n    if (lo >= hi) return;\n    swap(a[lo + rand() % (hi - lo + 1)], a[hi]);                     // random pivot, move to the end\n    int pivot = a[hi], p = lo;\n    for (int i = lo; i < hi; i++)\n        if (a[i] < pivot) swap(a[i], a[p++]);                        // grow the 'smaller' region\n    swap(a[p], a[hi]);                                               // pivot to its final place\n    quickSort(a, lo, p - 1);\n    quickSort(a, p + 1, hi);\n}\n",
+"cost": "Merge sort: O(n log n) always, O(n) extra space. Quicksort: O(n log n) average, O(n\u00b2) worst, O(log n) stack on average. Counting sort: O(n + k).",
+"mistakes": [
+"Quicksort on already sorted data with a fixed first or last pivot: worst case.",
+"Off-by-one in the merge boundaries (half-open ranges help).",
+"Claiming quicksort is always O(n log n)."
+],
+"practice": [
+"merge-intervals",
+"kth-largest-element-in-an-array",
+"meeting-rooms-ii"
+],
+"links": [
+{
+"t": "VisuAlgo: Sorting",
+"u": "https://visualgo.net/en/sorting"
+},
+{
+"t": "USFCA visualization: comparison sorts",
+"u": "https://www.cs.usfca.edu/~galles/visualization/ComparisonSort.html"
+}
+]
+},
+{
+"id": "bsearch",
+"title": "Binary search from scratch",
+"tag": "Core",
+"why": "Binary search finds a value, or the first place something becomes true, in O(log n) by halving the search range. It also solves 'smallest value that works' problems by searching the answer itself.",
+"how": [
+"Keep a range [lo, hi). Look at the middle. If the middle is too small, the answer is to the right: lo = mid + 1. Otherwise it is mid or to the left: hi = mid.",
+"Write down the invariant first: 'the answer is always inside [lo, hi]'. Every step must keep that true and shrink the range.",
+"mid = lo + (hi \u2212 lo) / 2 avoids overflow that (lo + hi) / 2 can cause.",
+"lower_bound returns the first index with a[i] \u2265 x. Searching for x exactly is lower_bound plus one check.",
+"Search on the answer: if 'is speed k enough?' flips from no to yes as k grows, binary search k."
+],
+"code": "\nint lowerBound(const vector<int>& a, int x) {            // first index with a[i] >= x, or a.size()\n    int lo = 0, hi = a.size();                           // answer lies in [lo, hi]\n    while (lo < hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (a[mid] < x) lo = mid + 1;                    // mid too small\n        else hi = mid;                                   // mid could be the answer\n    }\n    return lo;\n}\n\nint findExact(const vector<int>& a, int x) {\n    int i = lowerBound(a, x);\n    return (i < (int)a.size() && a[i] == x) ? i : -1;\n}\n",
+"cost": "Each step halves the range, so at most about log\u2082 n steps: O(log n). O(1) space.",
+"mistakes": [
+"Infinite loop from lo = mid when lo and hi are adjacent.",
+"Using (lo + hi) / 2 with large values.",
+"Searching an unsorted array."
+],
+"practice": [
+"find-minimum-in-rotated-sorted-array",
+"search-in-rotated-sorted-array",
+"koko-eating-bananas",
+"time-based-key-value-store"
+],
+"links": [
+{
+"t": "USFCA visualization: binary and linear search",
+"u": "https://www.cs.usfca.edu/~galles/visualization/Search.html"
+},
+{
+"t": "cp-algorithms: Binary search",
+"u": "https://cp-algorithms.com/num_methods/binary_search.html"
+}
+]
+},
+{
+"id": "tree",
+"title": "Binary tree and traversals",
+"tag": "Trees",
+"why": "A tree stores items with a parent and up to two children. Most tree problems are solved by recursing on the left and right subtrees, so learn the traversal shapes first.",
+"how": [
+"A node has a value, a left pointer and a right pointer. Null means no child. A leaf has two null children.",
+"Preorder: visit the node, then left, then right. Inorder: left, node, right. Postorder: left, right, node. They differ only in where the visit sits.",
+"Level order (breadth-first) uses a queue and visits one depth at a time.",
+"Height = 1 + max(height of left, height of right). Many answers combine the two sides like this.",
+"Inorder on a binary search tree gives sorted output."
+],
+"code": "\nstruct TreeNode { int val; TreeNode *left = nullptr, *right = nullptr; TreeNode(int v) : val(v) {} };\n\nvoid preorder(TreeNode* n, vector<int>& out)  { if (!n) return; out.push_back(n->val); preorder(n->left, out); preorder(n->right, out); }\nvoid inorder(TreeNode* n, vector<int>& out)   { if (!n) return; inorder(n->left, out); out.push_back(n->val); inorder(n->right, out); }\nvoid postorder(TreeNode* n, vector<int>& out) { if (!n) return; postorder(n->left, out); postorder(n->right, out); out.push_back(n->val); }\n\nint height(TreeNode* n) { return n ? 1 + max(height(n->left), height(n->right)) : 0; }\n\nvector<int> inorderIterative(TreeNode* root) {           // same result without recursion\n    vector<int> out; vector<TreeNode*> st; TreeNode* cur = root;\n    while (cur || !st.empty()) {\n        while (cur) { st.push_back(cur); cur = cur->left; }     // go as far left as possible\n        cur = st.back(); st.pop_back();\n        out.push_back(cur->val);\n        cur = cur->right;\n    }\n    return out;\n}\n",
+"cost": "Every traversal visits each node once: O(n) time. Space is the recursion depth, O(h): O(log n) for a balanced tree, O(n) for a chain.",
+"mistakes": [
+"Forgetting the null check, so you dereference a null child.",
+"Mixing up preorder, inorder and postorder.",
+"Assuming the tree is balanced: depth can be n."
+],
+"practice": [
+"maximum-depth-of-binary-tree",
+"invert-binary-tree",
+"same-tree",
+"binary-tree-level-order-traversal",
+"lowest-common-ancestor-of-a-binary-tree"
+],
+"links": [
+{
+"t": "USFCA visualization: binary search tree",
+"u": "https://www.cs.usfca.edu/~galles/visualization/BST.html"
+},
+{
+"t": "VisuAlgo: Binary Search Tree",
+"u": "https://visualgo.net/en/bst"
+}
+]
+},
+{
+"id": "bst",
+"title": "Binary search tree",
+"tag": "Trees",
+"why": "A binary search tree keeps the rule: everything in the left subtree is smaller, everything in the right is larger. So you can search, insert and delete in O(h), where h is the tree height.",
+"how": [
+"Search or insert: compare with the node, go left if smaller, right if larger, until you find it or hit null.",
+"Delete has three cases: a leaf (just remove), one child (replace the node with that child), two children (copy the smallest value of the right subtree into the node, then delete that value from the right subtree).",
+"Inorder traversal visits values in sorted order.",
+"If you insert sorted data, the tree becomes a chain and h = n. Balanced trees (AVL, red-black) rotate to keep h about log n. std::set and std::map are balanced trees.",
+"Validate a BST by passing down allowed (low, high) limits, not by comparing only with the parent."
+],
+"code": "\nstruct BNode { int key; BNode *left = nullptr, *right = nullptr; BNode(int k) : key(k) {} };\n\nBNode* insert(BNode* n, int k) {\n    if (!n) return new BNode(k);\n    if (k < n->key) n->left = insert(n->left, k);\n    else if (k > n->key) n->right = insert(n->right, k);          // ignore duplicates\n    return n;\n}\nbool contains(BNode* n, int k) {\n    while (n) { if (k == n->key) return true; n = k < n->key ? n->left : n->right; }\n    return false;\n}\nBNode* erase(BNode* n, int k) {\n    if (!n) return nullptr;\n    if (k < n->key) n->left = erase(n->left, k);\n    else if (k > n->key) n->right = erase(n->right, k);\n    else {\n        if (!n->left)  { BNode* r = n->right; delete n; return r; }   // zero or one child\n        if (!n->right) { BNode* l = n->left;  delete n; return l; }\n        BNode* s = n->right; while (s->left) s = s->left;             // smallest in the right subtree\n        n->key = s->key;\n        n->right = erase(n->right, s->key);\n    }\n    return n;\n}\nvoid inorderKeys(BNode* n, vector<int>& out) { if (!n) return; inorderKeys(n->left, out); out.push_back(n->key); inorderKeys(n->right, out); }\nvoid freeTree(BNode* n) { if (!n) return; freeTree(n->left); freeTree(n->right); delete n; }\n",
+"cost": "Search, insert, delete: O(h). Balanced: O(log n). Worst (sorted input into a plain BST): O(n). Space O(n) plus recursion depth O(h).",
+"mistakes": [
+"Validating a BST by comparing each node only with its parent.",
+"Forgetting that deleting a node with two children needs the successor.",
+"Quoting O(log n) for a plain BST without saying 'if balanced'."
+],
+"practice": [
+"validate-binary-search-tree",
+"kth-smallest-element-in-a-bst",
+"lowest-common-ancestor-of-a-binary-search-tree"
+],
+"links": [
+{
+"t": "VisuAlgo: Binary Search Tree",
+"u": "https://visualgo.net/en/bst"
+},
+{
+"t": "USFCA visualization: AVL tree (self-balancing)",
+"u": "https://www.cs.usfca.edu/~galles/visualization/AVLtree.html"
+}
+]
+},
+{
+"id": "heap",
+"title": "Heap (priority queue)",
+"tag": "Core",
+"why": "A heap gives you the smallest (or largest) item in O(1) and lets you add or remove in O(log n). It powers top-k, scheduling, merging sorted lists and Dijkstra.",
+"how": [
+"A binary heap is a complete binary tree stored in an array. For index i: parent is (i \u2212 1) / 2, children are 2i + 1 and 2i + 2. No pointers needed.",
+"Min-heap rule: every parent is \u2264 its children, so the minimum is at index 0.",
+"Push: put the item at the end, then sift up: swap with the parent while it is smaller.",
+"Pop: take index 0, move the last item to the root, then sift down: swap with the smaller child while it is bigger.",
+"Heapify (build from n items): sift down from the last parent to the root. It costs O(n), not O(n log n)."
+],
+"code": "\nclass MinHeap {\n    vector<int> a;\n    void siftUp(int i) {\n        while (i > 0 && a[(i-1)/2] > a[i]) { swap(a[(i-1)/2], a[i]); i = (i-1)/2; }\n    }\n    void siftDown(int i) {\n        int n = a.size();\n        while (true) {\n            int l = 2*i + 1, r = 2*i + 2, m = i;\n            if (l < n && a[l] < a[m]) m = l;\n            if (r < n && a[r] < a[m]) m = r;\n            if (m == i) return;\n            swap(a[i], a[m]); i = m;\n        }\n    }\npublic:\n    MinHeap() {}\n    explicit MinHeap(vector<int> v) : a(move(v)) {                 // heapify in O(n)\n        for (int i = (int)a.size() / 2 - 1; i >= 0; i--) siftDown(i);\n    }\n    void push(int x) { a.push_back(x); siftUp(a.size() - 1); }\n    int top() const { return a[0]; }\n    int pop() {\n        int x = a[0];\n        a[0] = a.back(); a.pop_back();\n        if (!a.empty()) siftDown(0);\n        return x;\n    }\n    bool empty() const { return a.empty(); }\n    int size() const { return a.size(); }\n};\n",
+"cost": "Push and pop O(log n) (the height of the tree). Top O(1). Build from n items O(n). Searching for an arbitrary value O(n).",
+"mistakes": [
+"Mixing up min-heap and max-heap. C++ priority_queue is a max-heap by default.",
+"Wrong child index math (0-based vs 1-based).",
+"Expecting a heap to be sorted: only the top is guaranteed."
+],
+"practice": [
+"kth-largest-element-in-an-array",
+"merge-k-sorted-lists",
+"find-median-from-data-stream",
+"task-scheduler"
+],
+"links": [
+{
+"t": "VisuAlgo: Binary Heap",
+"u": "https://visualgo.net/en/heap"
+},
+{
+"t": "USFCA visualization: heaps",
+"u": "https://www.cs.usfca.edu/~galles/visualization/Heap.html"
+}
+]
+},
+{
+"id": "trie",
+"title": "Trie (prefix tree)",
+"tag": "Trees",
+"why": "A trie stores words letter by letter along a path, so words sharing a prefix share nodes. It answers 'does any word start with this prefix?' in time proportional to the prefix length.",
+"how": [
+"Each node has up to 26 children (one per letter) and a flag that says a word ends here.",
+"Insert: walk letter by letter, creating missing nodes, then set the end flag on the last node.",
+"Search: walk the letters. The word exists only if you reach the end and its flag is set.",
+"Prefix check: same walk, but you only need to reach the end of the prefix.",
+"A trie lets a board search prune early: stop exploring a path when no word starts with it."
+],
+"code": "\nstruct TrieNode {\n    TrieNode* next[26] = {};\n    bool end = false;\n};\n\nclass Trie {\n    TrieNode* root = new TrieNode();\n    TrieNode* walk(const string& s) const {\n        TrieNode* cur = root;\n        for (char ch : s) {\n            cur = cur->next[ch - 'a'];\n            if (!cur) return nullptr;\n        }\n        return cur;\n    }\npublic:\n    void insert(const string& w) {\n        TrieNode* cur = root;\n        for (char ch : w) {\n            if (!cur->next[ch - 'a']) cur->next[ch - 'a'] = new TrieNode();\n            cur = cur->next[ch - 'a'];\n        }\n        cur->end = true;\n    }\n    bool search(const string& w) const { TrieNode* n = walk(w); return n && n->end; }\n    bool startsWith(const string& p) const { return walk(p) != nullptr; }\n};\n",
+"cost": "Insert, search, prefix: O(L), where L is the word length, independent of how many words are stored. Space: up to O(total letters \u00d7 26) with the array version.",
+"mistakes": [
+"Treating a prefix as a word: you must check the end flag.",
+"Memory blow-up with 26-child arrays on large inputs (use a map per node).",
+"Forgetting to free nodes in C++ (leaks)."
+],
+"practice": [
+"implement-trie-prefix-tree",
+"design-add-and-search-words-data-structure",
+"word-search-ii"
+],
+"links": [
+{
+"t": "USFCA visualization: trie",
+"u": "https://www.cs.usfca.edu/~galles/visualization/Trie.html"
+}
+]
+},
+{
+"id": "graph",
+"title": "Graphs: BFS and DFS",
+"tag": "Graphs",
+"why": "A graph is nodes plus edges. Maps, dependencies, networks and grids are all graphs. BFS and DFS are the two ways to visit every reachable node, and most graph problems use one of them.",
+"how": [
+"Adjacency list: for each node, a list of its neighbours. It uses O(V + E) space and is the default.",
+"BFS: use a queue. Visit the start, then all its neighbours, then theirs. It finds the fewest edges to every node.",
+"DFS: go as deep as possible, then backtrack. Use recursion or a stack. It suits components, cycles and ordering.",
+"Mark a node visited when you first add it. Otherwise the same node is queued many times.",
+"A grid is a graph: each cell is a node, and its four neighbours are the edges. Do not build the lists, use direction arrays."
+],
+"code": "\nstruct Graph {\n    int n; vector<vector<int>> adj;\n    Graph(int n) : n(n), adj(n) {}\n    void addEdge(int a, int b) { adj[a].push_back(b); adj[b].push_back(a); }   // undirected\n};\n\nvector<int> bfsOrder(const Graph& g, int src) {\n    vector<int> order, seen(g.n, 0); queue<int> q;\n    seen[src] = 1; q.push(src);\n    while (!q.empty()) {\n        int u = q.front(); q.pop(); order.push_back(u);\n        for (int v : g.adj[u]) if (!seen[v]) { seen[v] = 1; q.push(v); }      // mark when queued\n    }\n    return order;\n}\n\nvoid dfsRec(const Graph& g, int u, vector<int>& seen, vector<int>& order) {\n    seen[u] = 1; order.push_back(u);\n    for (int v : g.adj[u]) if (!seen[v]) dfsRec(g, v, seen, order);\n}\n\nint components(const Graph& g) {\n    vector<int> seen(g.n, 0), order; int count = 0;\n    for (int i = 0; i < g.n; i++) if (!seen[i]) { count++; dfsRec(g, i, seen, order); }\n    return count;\n}\n",
+"cost": "Both BFS and DFS visit each node and each edge once: O(V + E) time. BFS queue or DFS stack: O(V) space.",
+"mistakes": [
+"Marking visited when popping, so nodes enter the queue many times.",
+"Treating a directed and an undirected graph the same way for cycle detection.",
+"Forgetting disconnected parts: loop over all start nodes."
+],
+"practice": [
+"number-of-islands",
+"rotting-oranges",
+"clone-graph",
+"course-schedule",
+"pacific-atlantic-water-flow"
+],
+"links": [
+{
+"t": "VisuAlgo: Graph Traversal (DFS / BFS)",
+"u": "https://visualgo.net/en/dfsbfs"
+},
+{
+"t": "VisuAlgo: Graph data structures",
+"u": "https://visualgo.net/en/graphds"
+},
+{
+"t": "USFCA visualization: BFS",
+"u": "https://www.cs.usfca.edu/~galles/visualization/BFS.html"
+},
+{
+"t": "USFCA visualization: DFS",
+"u": "https://www.cs.usfca.edu/~galles/visualization/DFS.html"
+},
+{
+"t": "cp-algorithms: Dijkstra",
+"u": "https://cp-algorithms.com/graph/dijkstra.html"
+},
+{
+"t": "cp-algorithms: Topological sort",
+"u": "https://cp-algorithms.com/graph/topological-sort.html"
+}
+]
+},
+{
+"id": "dsu",
+"title": "Union-Find (disjoint sets)",
+"tag": "Graphs",
+"why": "Union-Find keeps track of groups that only merge. It answers 'are these two in the same group?' in almost O(1). It detects cycles and counts connected components as edges arrive.",
+"how": [
+"Every element points to a parent. The root of a chain is the group's representative.",
+"find(x): follow parents to the root. Path compression: point every node on the way directly at the root, so later finds are short.",
+"union(a, b): find both roots. If equal, they are already together. Otherwise attach the smaller tree under the larger (union by size).",
+"With both tricks the cost per operation is the inverse Ackermann function, below 5 for any real input.",
+"It cannot split a group. If you must delete edges, you need another approach."
+],
+"code": "\nclass UnionFind {\n    vector<int> parent, size_;\n    int groups;\npublic:\n    UnionFind(int n) : parent(n), size_(n, 1), groups(n) { iota(parent.begin(), parent.end(), 0); }\n    int find(int x) {\n        if (parent[x] != x) parent[x] = find(parent[x]);       // path compression\n        return parent[x];\n    }\n    bool unite(int a, int b) {\n        a = find(a); b = find(b);\n        if (a == b) return false;                              // already one group\n        if (size_[a] < size_[b]) swap(a, b);                   // attach smaller under larger\n        parent[b] = a; size_[a] += size_[b]; groups--;\n        return true;\n    }\n    bool same(int a, int b) { return find(a) == find(b); }\n    int count() const { return groups; }\n};\n",
+"cost": "find and unite: effectively O(1) (inverse Ackermann) with path compression and union by size. Build O(n). Space O(n).",
+"mistakes": [
+"Using only one of the two optimizations and thinking it is enough to quote near O(1).",
+"Forgetting to call find() on both sides before comparing.",
+"Trying to delete edges."
+],
+"practice": [
+"redundant-connection",
+"number-of-islands-ii",
+"satisfiability-of-equality-equations",
+"graph-valid-tree"
+],
+"links": [
+{
+"t": "VisuAlgo: Union-Find",
+"u": "https://visualgo.net/en/ufds"
+},
+{
+"t": "USFCA visualization: disjoint sets",
+"u": "https://www.cs.usfca.edu/~galles/visualization/DisjointSets.html"
+},
+{
+"t": "cp-algorithms: Disjoint Set Union",
+"u": "https://cp-algorithms.com/data_structures/disjoint_set_union.html"
+}
+]
+},
+{
+"id": "fenwick",
+"title": "Fenwick tree (binary indexed tree)",
+"tag": "Advanced",
+"why": "A Fenwick tree keeps prefix sums while the array changes. Both 'add x at position i' and 'sum of the first i items' take O(log n), where plain prefix sums would need O(n) to update.",
+"how": [
+"Positions are 1-based. Slot i stores the sum of a block of items ending at i. The block length is the lowest set bit of i: i & -i.",
+"Query prefix(i): add tree[i], then remove the lowest set bit (i \u2212= i & \u2212i) and repeat until 0. That visits at most log n slots.",
+"Update(i, delta): add delta to tree[i], then move up (i += i & \u2212i) until past n.",
+"Range sum(l..r) = prefix(r) \u2212 prefix(l \u2212 1).",
+"Use plain prefix sums if the array never changes. Use a segment tree if you need min, max or range updates."
+],
+"code": "\nclass Fenwick {\n    vector<long long> t;                                   // 1-based\npublic:\n    Fenwick(int n) : t(n + 1, 0) {}\n    void add(int i, long long delta) {                     // a[i] += delta\n        for (; i < (int)t.size(); i += i & -i) t[i] += delta;\n    }\n    long long prefix(int i) const {                        // a[1] + ... + a[i]\n        long long s = 0;\n        for (; i > 0; i -= i & -i) s += t[i];\n        return s;\n    }\n    long long range(int l, int r) const { return prefix(r) - prefix(l - 1); }\n};\n",
+"cost": "add and prefix: O(log n). Space O(n). Building by n adds is O(n log n).",
+"mistakes": [
+"Using 0-based indexes: i & -i breaks for i = 0.",
+"Using it when plain prefix sums would do.",
+"Forgetting to use long long when sums can be large."
+],
+"practice": [
+"range-sum-query-mutable",
+"count-of-smaller-numbers-after-self"
+],
+"links": [
+{
+"t": "VisuAlgo: Fenwick Tree",
+"u": "https://visualgo.net/en/fenwicktree"
+},
+{
+"t": "cp-algorithms: Fenwick Tree",
+"u": "https://cp-algorithms.com/data_structures/fenwick.html"
+}
+]
+},
+{
+"id": "segtree",
+"title": "Segment tree",
+"tag": "Advanced",
+"why": "A segment tree answers range questions (sum, min, max) and handles point updates, both in O(log n). It is the general tool when a Fenwick tree is not enough.",
+"how": [
+"Build a tree over the array. The root covers [0, n). Each node covers a range and stores its answer. Its children cover the left and right halves.",
+"Point update: change the leaf, then recompute each parent on the way up from its two children.",
+"Range query: if a node's range is fully inside the query, return its stored value. If it is outside, return the identity (0 for sum). Otherwise combine the answers of both children.",
+"Only about two nodes per level partially overlap the query, which is why it is O(log n).",
+"Swap + for min or max to change the question. Range updates need lazy propagation (a more advanced step)."
+],
+"code": "\nclass SegTree {\n    int n; vector<long long> t;                            // iterative, size 2n\npublic:\n    SegTree(const vector<int>& a) : n(a.size()), t(2 * a.size()) {\n        for (int i = 0; i < n; i++) t[n + i] = a[i];       // leaves\n        for (int i = n - 1; i > 0; i--) t[i] = t[2*i] + t[2*i + 1];\n    }\n    void set(int pos, int val) {                           // a[pos] = val\n        pos += n; t[pos] = val;\n        for (pos /= 2; pos >= 1; pos /= 2) t[pos] = t[2*pos] + t[2*pos + 1];\n    }\n    long long sum(int l, int r) const {                    // sum of a[l..r], inclusive\n        long long s = 0;\n        for (l += n, r += n + 1; l < r; l /= 2, r /= 2) {\n            if (l & 1) s += t[l++];\n            if (r & 1) s += t[--r];\n        }\n        return s;\n    }\n};\n",
+"cost": "Build O(n). Update and query O(log n). Space about 2n (iterative) or 4n (recursive).",
+"mistakes": [
+"Off-by-one on inclusive vs half-open ranges.",
+"Using it when a prefix-sum array or Fenwick tree is enough.",
+"Forgetting the identity value for the combine operation (0 for sum, +\u221e for min)."
+],
+"practice": [
+"range-sum-query-mutable",
+"count-of-smaller-numbers-after-self"
+],
+"links": [
+{
+"t": "VisuAlgo: Segment Tree",
+"u": "https://visualgo.net/en/segmenttree"
+},
+{
+"t": "cp-algorithms: Segment Tree",
+"u": "https://cp-algorithms.com/data_structures/segment_tree.html"
+}
+]
+},
+{
+"id": "dp",
+"title": "Dynamic programming, step by step",
+"tag": "Core",
+"why": "Dynamic programming solves a problem whose answer is built from answers to smaller versions of the same problem, and those smaller versions repeat. Store each answer once instead of recomputing it.",
+"how": [
+"Step 1: write the brute-force recursion. Say in words what the function returns (the state).",
+"Step 2: notice repeated calls with the same arguments. Add a memo table: check it first, store before returning (top-down).",
+"Step 3: turn it into a loop that fills the table from the base case upward (bottom-up). Fill in an order where each cell's inputs are already done.",
+"Step 4: shrink memory. If a cell only needs the last row or the last two values, keep just those.",
+"Cost = number of states \u00d7 work per state. For 0/1 knapsack: items \u00d7 capacity states, O(1) each."
+],
+"code": "\n// Same problem, four stages: Fibonacci\nlong long fib1(int n) { return n < 2 ? n : fib1(n-1) + fib1(n-2); }                 // O(2^n)\n\nlong long fib2(int n, vector<long long>& m) {                                       // top-down memo, O(n)\n    if (n < 2) return n;\n    if (m[n] >= 0) return m[n];\n    return m[n] = fib2(n-1, m) + fib2(n-2, m);\n}\nlong long fib3(int n) {                                                             // bottom-up table, O(n) space\n    vector<long long> dp(n + 2); dp[0] = 0; dp[1] = 1;\n    for (int i = 2; i <= n; i++) dp[i] = dp[i-1] + dp[i-2];\n    return dp[n];\n}\nlong long fib4(int n) {                                                             // keep two values, O(1) space\n    long long a = 0, b = 1;\n    for (int i = 0; i < n; i++) { long long c = a + b; a = b; b = c; }\n    return a;\n}\n\n// 0/1 knapsack: best value with total weight <= cap. dp[w] = best value using weight at most w.\nint knapsack(const vector<int>& wt, const vector<int>& val, int cap) {\n    vector<int> dp(cap + 1, 0);\n    for (size_t i = 0; i < wt.size(); i++)\n        for (int w = cap; w >= wt[i]; w--)                  // go DOWN so each item is used once\n            dp[w] = max(dp[w], dp[w - wt[i]] + val[i]);\n    return dp[cap];\n}\n",
+"cost": "fib1 is O(2^n). fib2, fib3 are O(n) time. fib4 is O(n) time and O(1) space. Knapsack is O(items \u00d7 capacity) time and O(capacity) space.",
+"mistakes": [
+"Starting from the table instead of from the brute-force recursion.",
+"Looping capacity upward in 0/1 knapsack, which reuses an item (that is the unbounded version).",
+"Not defining the state in words before coding."
+],
+"practice": [
+"climbing-stairs",
+"house-robber",
+"coin-change",
+"longest-common-subsequence",
+"partition-equal-subset-sum",
+"edit-distance"
+],
+"links": [
+{
+"t": "USFCA visualization: Fibonacci DP",
+"u": "https://www.cs.usfca.edu/~galles/visualization/DPFib.html"
+},
+{
+"t": "USFCA visualization: making change",
+"u": "https://www.cs.usfca.edu/~galles/visualization/DPChange.html"
+},
+{
+"t": "USFCA visualization: longest common subsequence",
+"u": "https://www.cs.usfca.edu/~galles/visualization/DPLCS.html"
+},
+{
+"t": "VisuAlgo: Recursion tree / DAG (see repeated work)",
+"u": "https://visualgo.net/en/recursion"
+}
+]
+},
+{
+"id": "bits",
+"title": "Bit manipulation basics",
+"tag": "Basics",
+"why": "Numbers are stored as bits. Bit operations are the fastest operations a CPU has, and a handful of tricks cover almost every interview problem on them.",
+"how": [
+"AND (&) keeps bits set in both. OR (|) keeps bits set in either. XOR (^) keeps bits that differ. NOT (~) flips every bit.",
+"Shift left (<<) multiplies by 2 per step. Shift right (>>) divides by 2.",
+"Test bit i: (x >> i) & 1. Set it: x | (1 << i). Clear it: x & ~(1 << i). Toggle it: x ^ (1 << i).",
+"x & (x \u2212 1) clears the lowest set bit. x & \u2212x isolates it. Repeating the first gives the bit count.",
+"XOR of a value with itself is 0, and with 0 is itself, so XOR cancels pairs. A mask with n bits can stand for a subset of n items: loop 0 to 2\u207f \u2212 1 to visit them all."
+],
+"code": "\nbool getBit(unsigned x, int i)   { return (x >> i) & 1u; }\nunsigned setBit(unsigned x, int i)    { return x | (1u << i); }\nunsigned clearBit(unsigned x, int i)  { return x & ~(1u << i); }\nunsigned toggleBit(unsigned x, int i) { return x ^ (1u << i); }\n\nunsigned lowestSetBit(unsigned x) { return x & (~x + 1); }            // same as x & -x for unsigned\nint countBits(unsigned x) { int c = 0; while (x) { x &= x - 1; c++; } return c; }\nbool isPowerOfTwo(unsigned x) { return x && !(x & (x - 1)); }\n\nvector<vector<int>> allSubsets(const vector<int>& a) {                // bitmask enumerates subsets\n    int n = a.size();\n    vector<vector<int>> out;\n    for (unsigned mask = 0; mask < (1u << n); mask++) {\n        vector<int> s;\n        for (int i = 0; i < n; i++) if (mask >> i & 1u) s.push_back(a[i]);\n        out.push_back(s);\n    }\n    return out;\n}\n",
+"cost": "Each single-bit operation is O(1). countBits loops once per set bit. Subset enumeration is O(2\u207f \u00d7 n).",
+"mistakes": [
+"Shifting by the width of the type or more (undefined in C++).",
+"Using signed integers for bit tricks: right shift of negatives and overflow surprises.",
+"Operator precedence: write (x & 1) == 0, not x & 1 == 0."
+],
+"practice": [
+"number-of-1-bits",
+"counting-bits",
+"missing-number",
+"sum-of-two-integers",
+"reverse-bits"
+],
+"links": [
+{
+"t": "VisuAlgo: Bitmask",
+"u": "https://visualgo.net/en/bitmask"
+}
+]
+}
+];
+
 /* Company tags: community-compiled from LeetCode company tags (github.com/liquidslr/leetcode-company-wise-problems, snapshot of June 2025).
    t[id][company]=[frequency 0-100 within that company's list, recency window 1=last 30 days 2=3 months 3=6 months 4=older]. Indicative only. */
 E.co={src:'liquidslr/leetcode-company-wise-problems, snapshot June 2025',names:["Amazon", "Google", "Microsoft", "Meta", "Apple", "Uber", "Atlassian", "Flipkart", "Adobe", "Walmart Labs", "PhonePe", "Salesforce", "Oracle", "Goldman Sachs", "Bloomberg", "Nvidia", "Qualcomm"],win:['','last 30 days','last 3 months','last 6 months','older than 6 months'],t:{"two-sum":{"Amazon":[100,1],"Google":[100,1],"Microsoft":[100,1],"Meta":[90,1],"Apple":[87,2],"Uber":[58,4],"Adobe":[100,4],"Bloomberg":[100,1],"Oracle":[82,3],"Flipkart":[77,3],"Atlassian":[41,4],"Goldman Sachs":[53,3],"Walmart Labs":[95,3],"PhonePe":[54,4],"Salesforce":[36,4],"Nvidia":[79,4],"Qualcomm":[91,4]},"lru-cache":{"Amazon":[89,1],"Google":[58,1],"Microsoft":[78,2],"Meta":[79,1],"Apple":[100,2],"Uber":[76,3],"Adobe":[89,1],"Bloomberg":[73,1],"Oracle":[100,3],"Flipkart":[43,4],"Atlassian":[41,4],"Goldman Sachs":[65,2],"Walmart Labs":[99,4],"PhonePe":[74,4],"Salesforce":[65,3],"Nvidia":[88,3],"Qualcomm":[86,4]},"trapping-rain-water":{"Amazon":[88,1],"Google":[74,1],"Microsoft":[79,2],"Meta":[63,2],"Apple":[64,4],"Uber":[42,4],"Adobe":[71,4],"Bloomberg":[81,1],"Oracle":[60,4],"Flipkart":[73,4],"Goldman Sachs":[100,1],"Walmart Labs":[97,4],"PhonePe":[74,4],"Salesforce":[49,4],"Nvidia":[68,3],"Qualcomm":[76,4]},"number-of-islands":{"Amazon":[86,1],"Google":[65,1],"Microsoft":[73,2],"Meta":[66,2],"Apple":[85,1],"Uber":[90,2],"Adobe":[78,4],"Bloomberg":[85,1],"Oracle":[84,3],"Flipkart":[43,4],"Goldman Sachs":[59,3],"Walmart Labs":[97,3],"PhonePe":[54,4],"Salesforce":[58,4],"Nvidia":[73,3],"Qualcomm":[91,4]},"longest-substring-without-repeating-characters":{"Amazon":[85,1],"Google":[73,1],"Microsoft":[80,1],"Meta":[69,1],"Apple":[67,2],"Uber":[20,4],"Adobe":[91,4],"Bloomberg":[85,1],"Oracle":[85,4],"Flipkart":[53,4],"Atlassian":[41,4],"Goldman Sachs":[63,2],"Walmart Labs":[100,4],"Salesforce":[62,4],"Nvidia":[84,4],"Qualcomm":[91,4]},"best-time-to-buy-and-sell-stock":{"Amazon":[84,1],"Google":[72,1],"Microsoft":[78,2],"Meta":[82,2],"Apple":[79,2],"Uber":[72,4],"Adobe":[78,3],"Bloomberg":[84,1],"Oracle":[56,4],"Flipkart":[53,4],"Atlassian":[57,2],"Goldman Sachs":[56,3],"Walmart Labs":[60,3],"Salesforce":[49,4],"Nvidia":[85,2]},"group-anagrams":{"Amazon":[81,1],"Google":[56,1],"Microsoft":[70,2],"Meta":[59,1],"Apple":[78,1],"Uber":[61,4],"Adobe":[95,3],"Bloomberg":[70,1],"Oracle":[82,3],"Atlassian":[41,4],"Goldman Sachs":[58,3],"Walmart Labs":[91,2],"PhonePe":[65,4],"Salesforce":[60,4],"Nvidia":[75,3]},"longest-palindromic-substring":{"Amazon":[79,1],"Google":[70,1],"Microsoft":[81,1],"Meta":[67,1],"Apple":[51,3],"Uber":[38,3],"Adobe":[71,4],"Bloomberg":[80,1],"Oracle":[64,4],"Flipkart":[53,3],"Goldman Sachs":[44,3],"Walmart Labs":[71,4],"PhonePe":[90,4],"Salesforce":[49,4],"Nvidia":[37,4]},"three-sum":{"Amazon":[78,1],"Google":[72,1],"Microsoft":[75,1],"Meta":[71,1],"Apple":[57,2],"Adobe":[84,4],"Bloomberg":[80,1],"Oracle":[60,4],"Flipkart":[60,4],"Goldman Sachs":[41,3],"Walmart Labs":[78,4],"PhonePe":[65,4],"Salesforce":[36,4],"Nvidia":[52,4],"Qualcomm":[76,4]},"median-of-two-sorted-arrays":{"Amazon":[77,1],"Google":[74,1],"Microsoft":[75,1],"Meta":[67,1],"Apple":[64,3],"Uber":[28,4],"Adobe":[87,4],"Bloomberg":[78,1],"Oracle":[53,4],"Flipkart":[43,4],"Goldman Sachs":[80,2],"Walmart Labs":[66,4],"Salesforce":[41,4],"Nvidia":[37,4],"Qualcomm":[57,4]},"container-with-most-water":{"Amazon":[77,1],"Google":[68,1],"Microsoft":[71,1],"Meta":[62,1],"Apple":[46,4],"Uber":[20,4],"Adobe":[42,4],"Bloomberg":[77,1],"Oracle":[62,4],"Flipkart":[77,4],"Goldman Sachs":[65,2],"Walmart Labs":[78,3],"Salesforce":[46,4],"Nvidia":[65,4],"Qualcomm":[57,4]},"merge-intervals":{"Amazon":[77,1],"Google":[65,1],"Microsoft":[73,1],"Meta":[85,1],"Apple":[85,2],"Uber":[45,3],"Adobe":[87,4],"Bloomberg":[87,1],"Oracle":[70,4],"Flipkart":[43,4],"Atlassian":[82,2],"Goldman Sachs":[60,2],"Walmart Labs":[91,3],"PhonePe":[54,4],"Salesforce":[65,2],"Nvidia":[61,4]},"course-schedule":{"Amazon":[75,1],"Google":[52,1],"Microsoft":[52,3],"Meta":[66,2],"Apple":[72,3],"Uber":[62,4],"Adobe":[42,4],"Bloomberg":[44,4],"Oracle":[56,4],"Flipkart":[53,4],"Goldman Sachs":[20,3],"Walmart Labs":[53,3],"Salesforce":[49,4],"Nvidia":[46,4]},"koko-eating-bananas":{"Amazon":[75,1],"Google":[58,1],"Microsoft":[65,3],"Meta":[59,2],"Apple":[22,4],"Uber":[48,4],"Adobe":[66,4],"Bloomberg":[62,2],"Oracle":[58,4],"Flipkart":[60,4],"Atlassian":[41,4],"Goldman Sachs":[36,3],"Salesforce":[46,4],"Nvidia":[52,2]},"valid-parentheses":{"Amazon":[74,1],"Google":[66,1],"Microsoft":[71,1],"Meta":[74,2],"Apple":[72,4],"Uber":[20,4],"Adobe":[71,4],"Bloomberg":[84,2],"Oracle":[73,4],"Flipkart":[43,4],"Goldman Sachs":[41,4],"Walmart Labs":[95,4],"PhonePe":[65,4],"Salesforce":[36,4],"Nvidia":[77,4],"Qualcomm":[76,4]},"merge-k-sorted-lists":{"Amazon":[74,1],"Google":[50,2],"Microsoft":[65,2],"Meta":[75,2],"Apple":[67,3],"Uber":[54,4],"Bloomberg":[57,2],"Oracle":[74,4],"Flipkart":[53,4],"Goldman Sachs":[27,4],"Walmart Labs":[66,4],"Salesforce":[46,2],"Nvidia":[77,3],"Qualcomm":[57,4]},"rotting-oranges":{"Amazon":[74,1],"Google":[52,1],"Microsoft":[57,1],"Meta":[39,2],"Apple":[39,4],"Uber":[52,3],"Adobe":[60,4],"Bloomberg":[56,2],"Oracle":[56,4],"Flipkart":[82,3],"Goldman Sachs":[39,4],"Walmart Labs":[66,4],"PhonePe":[65,4],"Salesforce":[41,3],"Nvidia":[46,4]},"maximum-subarray":{"Amazon":[72,1],"Google":[65,2],"Microsoft":[75,1],"Meta":[61,2],"Apple":[68,4],"Uber":[34,4],"Bloomberg":[69,2],"Oracle":[62,4],"Atlassian":[41,4],"Goldman Sachs":[52,4],"Walmart Labs":[66,4],"PhonePe":[54,4],"Salesforce":[36,4],"Nvidia":[73,4]},"top-k-frequent-elements":{"Amazon":[72,1],"Google":[58,1],"Microsoft":[56,1],"Meta":[81,3],"Apple":[77,3],"Uber":[54,4],"Adobe":[66,4],"Bloomberg":[54,2],"Oracle":[76,4],"Atlassian":[50,4],"Goldman Sachs":[47,4],"Walmart Labs":[66,3],"Salesforce":[46,4],"Nvidia":[61,3]},"search-in-rotated-sorted-array":{"Amazon":[72,1],"Google":[58,1],"Microsoft":[69,2],"Meta":[58,1],"Apple":[49,3],"Uber":[54,4],"Adobe":[60,4],"Bloomberg":[71,2],"Oracle":[68,2],"Flipkart":[65,4],"Goldman Sachs":[57,3],"Walmart Labs":[91,4],"Salesforce":[36,4],"Nvidia":[71,4]},"longest-consecutive-sequence":{"Amazon":[71,1],"Google":[70,1],"Microsoft":[63,1],"Meta":[57,2],"Apple":[53,2],"Uber":[42,4],"Adobe":[42,4],"Bloomberg":[72,1],"Oracle":[58,4],"Atlassian":[41,4],"Goldman Sachs":[39,4],"Walmart Labs":[71,4],"PhonePe":[54,4],"Salesforce":[28,3],"Nvidia":[52,3]},"lowest-common-ancestor-of-a-binary-tree":{"Amazon":[70,1],"Google":[42,1],"Microsoft":[54,4],"Meta":[86,3],"Apple":[63,4],"Adobe":[66,4],"Bloomberg":[49,2],"Oracle":[53,4],"Atlassian":[75,4],"Goldman Sachs":[20,4]},"generate-parentheses":{"Amazon":[69,2],"Google":[61,1],"Microsoft":[65,2],"Meta":[59,2],"Apple":[46,4],"Uber":[50,4],"Adobe":[60,4],"Bloomberg":[66,2],"Oracle":[58,4],"Flipkart":[53,4],"Goldman Sachs":[39,4],"Walmart Labs":[93,4],"Salesforce":[41,3],"Qualcomm":[57,4]},"word-ladder":{"Amazon":[68,1],"Google":[42,1],"Microsoft":[43,4],"Meta":[58,3],"Apple":[60,2],"Uber":[48,4],"Adobe":[42,4],"Bloomberg":[52,2],"Oracle":[51,4],"Flipkart":[53,4],"Goldman Sachs":[20,4],"PhonePe":[54,4],"Salesforce":[41,4]},"jump-game":{"Amazon":[68,1],"Google":[57,2],"Microsoft":[59,2],"Meta":[50,2],"Apple":[46,4],"Adobe":[75,4],"Bloomberg":[62,2],"Oracle":[44,4],"Flipkart":[43,4],"Goldman Sachs":[41,4],"Walmart Labs":[53,4],"PhonePe":[54,4],"Nvidia":[46,4]},"product-of-array-except-self":{"Amazon":[68,1],"Google":[54,1],"Microsoft":[64,1],"Meta":[53,1],"Apple":[70,4],"Uber":[71,4],"Adobe":[52,4],"Bloomberg":[60,2],"Oracle":[51,4],"Flipkart":[43,4],"Goldman Sachs":[44,4],"Walmart Labs":[42,4],"Salesforce":[36,4],"Nvidia":[57,4]},"house-robber":{"Amazon":[67,1],"Google":[57,1],"Microsoft":[59,2],"Meta":[44,2],"Apple":[30,4],"Uber":[38,4],"Adobe":[52,4],"Bloomberg":[60,1],"Oracle":[39,4],"Goldman Sachs":[39,4],"Walmart Labs":[60,4],"PhonePe":[65,4],"Nvidia":[52,4]},"climbing-stairs":{"Amazon":[67,1],"Google":[64,1],"Microsoft":[67,2],"Meta":[57,1],"Apple":[57,4],"Adobe":[84,4],"Bloomberg":[67,1],"Oracle":[33,4],"Goldman Sachs":[32,4],"Walmart Labs":[42,4],"Nvidia":[52,4],"Qualcomm":[68,4]},"letter-combinations-of-a-phone-number":{"Amazon":[67,1],"Google":[57,1],"Microsoft":[59,1],"Meta":[58,2],"Apple":[49,3],"Uber":[59,4],"Bloomberg":[54,2],"Oracle":[47,4],"Goldman Sachs":[27,4],"Walmart Labs":[42,4],"PhonePe":[54,4],"Nvidia":[37,4]},"merge-two-sorted-lists":{"Amazon":[67,1],"Google":[62,1],"Microsoft":[66,1],"Meta":[58,2],"Apple":[61,4],"Adobe":[42,4],"Bloomberg":[72,1],"Oracle":[39,4],"Goldman Sachs":[20,4],"Salesforce":[36,4],"Nvidia":[37,4],"Qualcomm":[57,4]},"sliding-window-maximum":{"Amazon":[66,1],"Google":[55,1],"Microsoft":[55,2],"Meta":[53,2],"Apple":[43,4],"Uber":[45,4],"Adobe":[42,4],"Bloomberg":[49,2],"Oracle":[74,4],"Goldman Sachs":[46,4],"Walmart Labs":[42,2],"PhonePe":[54,4],"Salesforce":[36,4],"Nvidia":[57,4]},"spiral-matrix":{"Amazon":[65,2],"Google":[59,1],"Microsoft":[67,1],"Meta":[52,2],"Apple":[68,3],"Uber":[64,4],"Adobe":[60,4],"Bloomberg":[60,1],"Oracle":[69,4],"Flipkart":[43,4],"Goldman Sachs":[36,4],"Walmart Labs":[60,4],"PhonePe":[54,4],"Salesforce":[28,4],"Nvidia":[46,4]},"word-search":{"Amazon":[65,2],"Google":[44,1],"Microsoft":[55,3],"Meta":[43,3],"Apple":[39,4],"Uber":[78,3],"Bloomberg":[78,2],"Oracle":[39,4],"Atlassian":[65,4],"Goldman Sachs":[27,4],"Walmart Labs":[60,4],"Salesforce":[46,4]},"valid-anagram":{"Amazon":[64,1],"Google":[57,1],"Microsoft":[62,1],"Meta":[53,2],"Apple":[39,4],"Uber":[56,4],"Bloomberg":[75,2],"Oracle":[58,4],"Goldman Sachs":[20,4],"Nvidia":[52,4]},"subsets":{"Amazon":[64,1],"Google":[51,2],"Microsoft":[55,2],"Meta":[62,2],"Uber":[50,4],"Bloomberg":[70,1],"Oracle":[25,4],"Flipkart":[43,4],"Goldman Sachs":[20,4],"Walmart Labs":[53,4]},"rotate-image":{"Amazon":[64,1],"Google":[56,2],"Microsoft":[67,2],"Meta":[53,2],"Apple":[66,3],"Uber":[45,4],"Adobe":[52,4],"Bloomberg":[66,1],"Oracle":[39,4],"Flipkart":[43,4],"Goldman Sachs":[20,4],"Nvidia":[52,4],"Qualcomm":[76,4]},"find-median-from-data-stream":{"Amazon":[63,1],"Google":[51,1],"Microsoft":[54,3],"Meta":[50,4],"Apple":[60,3],"Uber":[48,3],"Adobe":[52,4],"Bloomberg":[40,3],"Oracle":[58,4],"Flipkart":[60,4],"Goldman Sachs":[36,4],"Walmart Labs":[66,4],"Salesforce":[36,4]},"coin-change":{"Amazon":[63,2],"Google":[49,1],"Microsoft":[55,1],"Meta":[49,1],"Apple":[43,4],"Uber":[54,4],"Adobe":[52,4],"Bloomberg":[63,2],"Oracle":[53,4],"Goldman Sachs":[44,4],"Walmart Labs":[71,4],"PhonePe":[54,4],"Salesforce":[41,4]},"task-scheduler":{"Amazon":[63,1],"Google":[40,2],"Microsoft":[44,2],"Meta":[36,4],"Apple":[49,2],"Uber":[38,4],"Bloomberg":[32,2],"Oracle":[51,4],"Goldman Sachs":[36,4],"Walmart Labs":[42,4],"Nvidia":[37,4]},"kth-largest-element-in-an-array":{"Amazon":[62,2],"Google":[55,2],"Microsoft":[60,3],"Meta":[93,1],"Apple":[68,4],"Uber":[20,4],"Adobe":[42,4],"Bloomberg":[56,2],"Oracle":[51,4],"Flipkart":[60,3],"Goldman Sachs":[47,4],"Walmart Labs":[66,3],"Salesforce":[46,4],"Nvidia":[46,4],"Qualcomm":[57,4]},"minimum-window-substring":{"Amazon":[62,1],"Google":[42,2],"Microsoft":[54,2],"Meta":[72,2],"Apple":[22,4],"Uber":[56,4],"Adobe":[75,4],"Bloomberg":[43,3],"Oracle":[51,3],"Goldman Sachs":[32,3],"Walmart Labs":[53,4],"Salesforce":[46,4]},"meeting-rooms-ii":{"Amazon":[62,1],"Google":[59,1],"Microsoft":[57,3],"Meta":[53,3],"Apple":[64,4],"Uber":[61,3],"Adobe":[52,4],"Bloomberg":[66,2],"Oracle":[66,4],"Atlassian":[71,4],"Goldman Sachs":[20,4],"Walmart Labs":[53,4],"Salesforce":[41,2]},"unique-paths":{"Amazon":[61,1],"Google":[49,1],"Microsoft":[51,2],"Meta":[50,2],"Bloomberg":[54,2],"Flipkart":[60,4],"Goldman Sachs":[39,3],"Nvidia":[46,4],"Qualcomm":[57,4]},"largest-rectangle-in-histogram":{"Amazon":[60,1],"Google":[57,1],"Microsoft":[55,2],"Meta":[47,2],"Apple":[22,4],"Uber":[48,4],"Adobe":[42,4],"Bloomberg":[55,2],"Oracle":[25,4],"Flipkart":[70,4],"Goldman Sachs":[27,4],"Walmart Labs":[53,4],"Salesforce":[28,4]},"n-queens":{"Amazon":[60,2],"Google":[57,1],"Microsoft":[58,2],"Meta":[46,2],"Adobe":[52,4],"Bloomberg":[54,2],"Oracle":[47,4],"Goldman Sachs":[41,4]},"word-break":{"Amazon":[60,1],"Google":[45,2],"Microsoft":[51,3],"Meta":[54,3],"Apple":[58,4],"Uber":[61,4],"Bloomberg":[58,3],"Oracle":[33,4],"Walmart Labs":[82,4]},"binary-tree-maximum-path-sum":{"Amazon":[60,1],"Google":[48,2],"Microsoft":[49,2],"Meta":[52,3],"Apple":[22,4],"Uber":[38,4],"Adobe":[66,3],"Bloomberg":[45,2],"Oracle":[44,4],"Flipkart":[43,4],"Goldman Sachs":[39,1],"Salesforce":[55,4]},"longest-repeating-character-replacement":{"Amazon":[60,2],"Google":[54,1],"Microsoft":[54,2],"Meta":[47,3],"Apple":[22,4],"Adobe":[42,4],"Bloomberg":[62,2],"Flipkart":[43,4],"Goldman Sachs":[41,4]},"best-time-to-buy-and-sell-stock-ii":{"Amazon":[59,2],"Google":[49,1],"Microsoft":[48,2],"Meta":[48,2],"Apple":[66,3],"Bloomberg":[56,1],"Atlassian":[33,4],"Goldman Sachs":[51,4],"Walmart Labs":[42,4],"Nvidia":[37,4]},"min-stack":{"Amazon":[59,2],"Google":[50,2],"Microsoft":[56,2],"Meta":[42,2],"Apple":[60,4],"Uber":[50,4],"Adobe":[42,4],"Bloomberg":[70,3],"Oracle":[62,4],"Flipkart":[43,4],"Walmart Labs":[53,4],"Salesforce":[49,4],"Nvidia":[46,4]},"reverse-linked-list":{"Amazon":[58,1],"Google":[59,1],"Microsoft":[65,2],"Meta":[51,2],"Apple":[76,3],"Uber":[48,4],"Adobe":[84,4],"Bloomberg":[65,2],"Oracle":[64,4],"Goldman Sachs":[32,4],"Nvidia":[52,4],"Qualcomm":[91,4]},"contains-duplicate":{"Amazon":[58,1],"Google":[52,1],"Microsoft":[58,2],"Meta":[48,1],"Apple":[30,4],"Bloomberg":[61,2],"Oracle":[25,4],"Nvidia":[37,4]},"daily-temperatures":{"Amazon":[57,2],"Google":[47,1],"Microsoft":[53,3],"Meta":[47,2],"Bloomberg":[57,2],"Oracle":[33,4],"Flipkart":[43,4],"Goldman Sachs":[39,3],"Walmart Labs":[53,4],"Nvidia":[37,4]},"permutations":{"Amazon":[57,1],"Google":[50,2],"Microsoft":[56,2],"Meta":[44,3],"Apple":[43,4],"Uber":[34,4],"Bloomberg":[53,1],"Oracle":[39,4],"Goldman Sachs":[20,4],"Qualcomm":[57,4]},"serialize-and-deserialize-binary-tree":{"Amazon":[57,2],"Google":[38,3],"Microsoft":[59,2],"Meta":[45,2],"Apple":[51,4],"Uber":[58,3],"Bloomberg":[43,2],"Oracle":[25,4],"Flipkart":[43,4],"Atlassian":[33,4],"Nvidia":[52,4]},"set-matrix-zeroes":{"Amazon":[56,2],"Google":[51,2],"Microsoft":[57,2],"Meta":[56,2],"Apple":[39,4],"Bloomberg":[57,2],"Oracle":[39,4],"Goldman Sachs":[32,4],"Walmart Labs":[60,4],"Nvidia":[46,4]},"lfu-cache":{"Amazon":[56,3],"Google":[36,1],"Microsoft":[43,3],"Meta":[14,4],"Apple":[49,1],"Uber":[38,4],"Bloomberg":[13,4],"Oracle":[66,4],"Goldman Sachs":[20,4],"Walmart Labs":[66,4],"Salesforce":[79,2]},"binary-tree-level-order-traversal":{"Amazon":[54,2],"Google":[43,2],"Microsoft":[54,3],"Meta":[48,2],"Apple":[53,4],"Adobe":[42,4],"Bloomberg":[58,3],"Oracle":[51,4],"Goldman Sachs":[27,4]},"missing-number":{"Amazon":[54,2],"Google":[46,1],"Microsoft":[48,3],"Meta":[39,3],"Apple":[35,4],"Bloomberg":[53,2],"Goldman Sachs":[20,4],"Salesforce":[36,4],"Nvidia":[52,4]},"reorder-list":{"Amazon":[54,2],"Google":[39,1],"Microsoft":[47,2],"Meta":[45,2],"Apple":[35,4],"Bloomberg":[57,1],"Goldman Sachs":[20,4]},"gas-station":{"Amazon":[54,2],"Google":[39,3],"Microsoft":[50,2],"Meta":[36,4],"Apple":[39,4],"Adobe":[60,3],"Bloomberg":[56,1],"Oracle":[47,4],"Flipkart":[77,4],"Goldman Sachs":[39,3],"PhonePe":[65,4],"Salesforce":[41,4]},"maximum-product-subarray":{"Amazon":[54,2],"Google":[51,2],"Microsoft":[47,4],"Meta":[38,2],"Adobe":[71,4],"Bloomberg":[53,2],"Goldman Sachs":[27,4],"Walmart Labs":[53,4],"Nvidia":[37,4],"Qualcomm":[57,4]},"valid-palindrome":{"Amazon":[54,1],"Google":[52,1],"Microsoft":[60,2],"Meta":[83,1],"Apple":[71,3],"Uber":[48,4],"Adobe":[42,4],"Bloomberg":[65,2],"Oracle":[47,4],"Goldman Sachs":[20,4],"Walmart Labs":[53,4],"Salesforce":[28,4]},"word-search-ii":{"Amazon":[54,2],"Google":[34,3],"Microsoft":[42,4],"Meta":[27,3],"Apple":[30,4],"Uber":[73,3],"Bloomberg":[18,4],"Oracle":[25,4]},"candy":{"Amazon":[53,1],"Google":[47,2],"Microsoft":[48,3],"Meta":[33,4],"Uber":[42,4],"Bloomberg":[54,2],"Oracle":[25,4],"Flipkart":[43,4],"Goldman Sachs":[36,4],"Walmart Labs":[53,4],"PhonePe":[54,4],"Salesforce":[28,4]},"remove-nth-node-from-end-of-list":{"Amazon":[53,2],"Google":[51,1],"Microsoft":[53,3],"Meta":[65,2],"Apple":[51,4],"Bloomberg":[52,2],"Oracle":[25,4],"Flipkart":[43,4],"Walmart Labs":[42,4],"Qualcomm":[68,4]},"combination-sum":{"Amazon":[53,3],"Google":[47,2],"Microsoft":[50,2],"Meta":[45,2],"Apple":[35,4],"Uber":[50,4],"Bloomberg":[54,1],"Oracle":[25,4],"Walmart Labs":[71,4],"Salesforce":[36,4]},"edit-distance":{"Amazon":[53,2],"Google":[46,2],"Microsoft":[47,3],"Meta":[34,3],"Apple":[39,2],"Bloomberg":[51,3],"Flipkart":[53,4],"Walmart Labs":[42,4],"Qualcomm":[57,4]},"longest-increasing-subsequence":{"Amazon":[53,2],"Google":[53,2],"Microsoft":[55,2],"Meta":[36,3],"Bloomberg":[51,2],"Oracle":[39,4],"Atlassian":[33,4],"Goldman Sachs":[20,4],"Walmart Labs":[71,4],"Salesforce":[41,4],"Nvidia":[46,4]},"validate-binary-search-tree":{"Amazon":[52,2],"Google":[35,2],"Microsoft":[53,2],"Meta":[45,2],"Apple":[30,4],"Bloomberg":[65,2],"Oracle":[44,4],"Goldman Sachs":[20,4],"Salesforce":[41,4]},"diameter-of-binary-tree":{"Amazon":[52,1],"Google":[44,1],"Microsoft":[42,2],"Meta":[87,3],"Apple":[22,4],"Bloomberg":[48,2],"Oracle":[51,4],"Flipkart":[43,4],"Walmart Labs":[42,4],"Nvidia":[37,4]},"partition-equal-subset-sum":{"Amazon":[52,1],"Google":[47,1],"Microsoft":[42,3],"Meta":[38,3],"Apple":[22,3],"Bloomberg":[49,2],"Goldman Sachs":[27,4],"Salesforce":[28,4]},"linked-list-cycle":{"Amazon":[51,1],"Google":[47,1],"Microsoft":[53,2],"Meta":[39,1],"Bloomberg":[54,3],"Oracle":[39,4],"Goldman Sachs":[32,4],"Nvidia":[52,2],"Qualcomm":[76,4]},"palindrome-partitioning":{"Amazon":[50,1],"Google":[46,1],"Microsoft":[48,3],"Meta":[47,2],"Bloomberg":[58,3],"Salesforce":[28,2]},"same-tree":{"Amazon":[48,2],"Google":[47,2],"Microsoft":[45,1],"Meta":[37,2],"Apple":[30,4],"Bloomberg":[52,3]},"time-based-key-value-store":{"Amazon":[48,2],"Google":[31,1],"Microsoft":[33,4],"Meta":[22,4],"Apple":[68,1],"Uber":[54,3],"Bloomberg":[27,2],"Oracle":[53,3],"Walmart Labs":[42,4],"Salesforce":[28,4]},"find-minimum-in-rotated-sorted-array":{"Amazon":[47,1],"Google":[39,1],"Microsoft":[50,4],"Meta":[41,3],"Apple":[30,4],"Uber":[28,4],"Bloomberg":[37,3],"Oracle":[33,4],"Flipkart":[43,4],"Goldman Sachs":[52,4],"Walmart Labs":[53,4]},"maximum-depth-of-binary-tree":{"Amazon":[47,2],"Google":[40,1],"Microsoft":[49,2],"Meta":[39,3],"Apple":[49,4],"Uber":[48,4],"Bloomberg":[48,1],"Oracle":[25,4],"Qualcomm":[57,4]},"pacific-atlantic-water-flow":{"Amazon":[46,1],"Google":[41,2],"Microsoft":[27,3],"Meta":[23,4],"Apple":[22,4],"Adobe":[42,4],"Bloomberg":[13,4],"Flipkart":[60,4]},"construct-binary-tree-from-preorder-and-inorder-traversal":{"Amazon":[45,2],"Google":[37,2],"Microsoft":[42,3],"Meta":[31,4],"Adobe":[52,4],"Bloomberg":[52,2],"Salesforce":[28,4]},"kth-smallest-element-in-a-bst":{"Amazon":[45,2],"Google":[41,2],"Microsoft":[42,2],"Meta":[36,3],"Uber":[82,3],"Bloomberg":[49,4],"Oracle":[51,4]},"lowest-common-ancestor-of-a-binary-search-tree":{"Amazon":[45,3],"Google":[27,3],"Microsoft":[44,3],"Meta":[50,4],"Bloomberg":[46,3]},"house-robber-iii":{"Amazon":[45,1],"Google":[28,4],"Microsoft":[25,2],"Meta":[8,4],"Uber":[52,4],"Bloomberg":[13,4],"Salesforce":[36,4]},"cheapest-flights-within-k-stops":{"Amazon":[44,2],"Google":[37,2],"Microsoft":[27,4],"Meta":[25,3],"Apple":[39,3],"Uber":[34,4],"Bloomberg":[30,2],"Flipkart":[65,1],"Walmart Labs":[42,4]},"subsets-ii":{"Amazon":[43,2],"Google":[45,2],"Microsoft":[44,3],"Meta":[41,2],"Bloomberg":[50,2],"Walmart Labs":[53,4]},"non-overlapping-intervals":{"Amazon":[43,2],"Google":[32,1],"Microsoft":[33,1],"Meta":[31,4],"Apple":[22,4],"Uber":[20,4],"Bloomberg":[39,3],"Oracle":[25,4],"Goldman Sachs":[20,4]},"invert-binary-tree":{"Amazon":[41,4],"Google":[43,1],"Microsoft":[31,1],"Meta":[28,3],"Bloomberg":[32,4],"Oracle":[25,4]},"partition-labels":{"Amazon":[41,3],"Google":[20,2],"Microsoft":[27,2],"Meta":[17,4],"Bloomberg":[18,4]},"house-robber-ii":{"Amazon":[41,3],"Google":[36,2],"Microsoft":[45,4],"Meta":[31,3],"Bloomberg":[41,2],"Salesforce":[28,4]},"clone-graph":{"Amazon":[40,2],"Google":[40,2],"Microsoft":[25,4],"Meta":[71,3],"Apple":[22,4],"Uber":[48,4],"Bloomberg":[27,4],"Oracle":[39,4],"Nvidia":[37,4]},"palindromic-substrings":{"Amazon":[40,3],"Google":[32,3],"Microsoft":[38,3],"Meta":[63,3],"Apple":[35,4],"Bloomberg":[32,2],"Oracle":[47,4],"Goldman Sachs":[44,4],"Walmart Labs":[60,4],"Salesforce":[58,4]},"decode-ways":{"Amazon":[39,4],"Google":[30,1],"Microsoft":[43,3],"Meta":[43,2],"Uber":[52,4],"Adobe":[42,4],"Bloomberg":[27,3],"Oracle":[25,4],"Flipkart":[43,4],"Goldman Sachs":[59,4],"Walmart Labs":[53,4]},"implement-trie-prefix-tree":{"Amazon":[38,4],"Google":[36,1],"Microsoft":[47,3],"Meta":[34,1],"Apple":[55,3],"Uber":[48,4],"Bloomberg":[46,3],"Oracle":[51,4],"Goldman Sachs":[27,4]},"alien-dictionary":{"Amazon":[38,1],"Google":[35,3],"Microsoft":[23,4],"Meta":[53,4],"Apple":[35,4],"Uber":[95,2],"Bloomberg":[13,3]},"insert-interval":{"Amazon":[37,2],"Google":[46,1],"Microsoft":[39,3],"Meta":[38,4],"Apple":[43,4],"Uber":[38,4],"Bloomberg":[32,4],"Oracle":[25,4],"Walmart Labs":[53,4],"PhonePe":[54,4]},"longest-common-subsequence":{"Amazon":[37,2],"Google":[40,1],"Microsoft":[47,2],"Meta":[34,3],"Apple":[22,4],"Bloomberg":[40,2],"Walmart Labs":[42,4],"Salesforce":[55,4]},"burst-balloons":{"Amazon":[36,2],"Google":[42,1],"Microsoft":[33,2],"Meta":[22,2],"Uber":[42,4],"Bloomberg":[18,4],"Goldman Sachs":[20,4],"PhonePe":[65,4],"Salesforce":[28,4]},"design-add-and-search-words-data-structure":{"Amazon":[35,2],"Google":[24,4],"Microsoft":[29,4],"Meta":[25,4],"Apple":[35,4],"Bloomberg":[21,4],"Oracle":[25,4],"Atlassian":[33,4]},"sum-of-two-integers":{"Amazon":[35,3],"Google":[36,2],"Microsoft":[23,3],"Meta":[23,2],"Bloomberg":[32,4]},"number-of-connected-components-in-an-undirected-graph":{"Amazon":[34,4],"Google":[22,4],"Meta":[11,4]},"combination-sum-ii":{"Amazon":[33,3],"Google":[33,2],"Microsoft":[37,4],"Meta":[39,4],"Adobe":[42,4],"Bloomberg":[39,3],"Oracle":[39,4],"Walmart Labs":[42,4],"Salesforce":[28,4]},"reverse-bits":{"Amazon":[31,3],"Google":[26,2],"Microsoft":[23,3],"Meta":[23,4],"Apple":[63,4],"Bloomberg":[18,4],"Nvidia":[68,4],"Qualcomm":[76,4]},"number-of-1-bits":{"Amazon":[29,2],"Google":[31,2],"Microsoft":[36,4],"Meta":[22,3],"Apple":[55,4],"Bloomberg":[21,4],"Nvidia":[37,4],"Qualcomm":[57,4]},"meeting-rooms":{"Amazon":[28,3],"Google":[20,4],"Microsoft":[29,4],"Meta":[33,4],"Apple":[46,3],"Uber":[20,4],"Bloomberg":[13,4],"Oracle":[44,4]},"subtree-of-another-tree":{"Amazon":[28,3],"Google":[21,3],"Microsoft":[20,4],"Meta":[32,4],"Bloomberg":[25,3]},"redundant-connection":{"Amazon":[28,2],"Google":[34,4],"Microsoft":[20,3],"Meta":[25,4],"Apple":[22,4],"Bloomberg":[30,3],"Oracle":[25,4]},"best-time-to-buy-and-sell-stock-iv":{"Amazon":[27,2],"Google":[26,2],"Microsoft":[25,3],"Meta":[14,4],"Apple":[30,4],"Goldman Sachs":[32,4]},"network-delay-time":{"Amazon":[27,3],"Google":[37,2],"Microsoft":[20,4],"Meta":[11,4],"Bloomberg":[21,4],"Salesforce":[41,4],"Nvidia":[37,2]},"count-of-smaller-numbers-after-self":{"Amazon":[25,3],"Google":[33,2],"Microsoft":[29,4],"Meta":[19,4],"Bloomberg":[30,4]},"minimum-number-of-arrows-to-burst-balloons":{"Amazon":[25,3],"Google":[18,2],"Microsoft":[34,4],"Bloomberg":[21,4],"Goldman Sachs":[27,4]},"path-with-minimum-effort":{"Amazon":[25,2],"Google":[37,2],"Microsoft":[20,4],"Meta":[17,4],"Bloomberg":[21,4]},"counting-bits":{"Amazon":[24,3],"Google":[25,2],"Microsoft":[31,4],"Meta":[22,4],"Apple":[22,4],"Bloomberg":[21,4],"Oracle":[25,4],"Nvidia":[46,4],"Qualcomm":[57,4]},"encode-and-decode-strings":{"Amazon":[22,4],"Google":[30,4],"Microsoft":[25,4],"Meta":[19,4],"Oracle":[25,4]},"best-time-to-buy-and-sell-stock-with-cooldown":{"Amazon":[18,2],"Google":[33,3],"Microsoft":[16,4],"Apple":[39,3],"Bloomberg":[21,4]},"number-of-islands-ii":{"Amazon":[10,3],"Google":[36,3],"Meta":[14,4],"Uber":[90,2],"Walmart Labs":[42,4]},"satisfiability-of-equality-equations":{"Amazon":[10,3],"Google":[15,4],"Meta":[5,4]},"graph-valid-tree":{"Amazon":[7,4],"Google":[29,4],"Microsoft":[12,4],"Meta":[27,4],"Uber":[20,4]},"range-sum-query-mutable":{"Amazon":[5,4],"Google":[11,3],"Adobe":[42,4],"Bloomberg":[13,4]}}};
@@ -7656,9 +8789,9 @@ HLD.push(
  trade:[`Short TTL means fast recovery but risks losing the lock during pauses. Long TTL means slow recovery.`,`A lock service is a new dependency and a single point of failure unless it is itself a quorum.`,`Often a better answer is to avoid the lock: use a conditional write, a unique constraint, or an idempotent operation.`],
  follow:[`What happens if the holder is paused after its lease expires?`,`When would you use a database row lock instead?`,`How do you build leader election on top of this?`]}
 );
-var KEY='twistlab.prep.v1',ST={done:{},stories:[],sel:null,tab:'hld',design:null,fun:null,q:null,qTimer:null,qLeft:0,mk:{},plan:{date:'',hrs:2,ck:{}}};
-try{var raw=localStorage.getItem(KEY);if(raw){var o=JSON.parse(raw);ST.done=o.done||{};ST.stories=o.stories||[];ST.mk=o.mk||{};ST.plan=o.plan||ST.plan;ST.plan.ck=ST.plan.ck||{}}}catch(e){}
-function save(){try{localStorage.setItem(KEY,JSON.stringify({done:ST.done,stories:ST.stories,mk:ST.mk,plan:ST.plan}))}catch(e){}}
+var KEY='twistlab.prep.v1',ST={done:{},stories:[],sel:null,tab:'hld',design:null,fun:null,tool:null,learn:{},lopen:null,q:null,qTimer:null,qLeft:0,mk:{},plan:{date:'',hrs:2,ck:{}}};
+try{var raw=localStorage.getItem(KEY);if(raw){var o=JSON.parse(raw);ST.done=o.done||{};ST.stories=o.stories||[];ST.mk=o.mk||{};ST.learn=o.learn||{};ST.plan=o.plan||ST.plan;ST.plan.ck=ST.plan.ck||{}}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({done:ST.done,stories:ST.stories,mk:ST.mk,plan:ST.plan,learn:ST.learn}))}catch(e){}}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function ul(a){return '<ul>'+a.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>'}
 var $=function(id){return document.getElementById(id)};var RR=function(){};
@@ -7678,8 +8811,63 @@ function viewHld(){
 }
 function storiesFor(i){return ST.stories.filter(function(s){return (s.lps||[]).indexOf(i)>=0})}
 var FUN_BY={};FUND.forEach(function(f){FUN_BY[f.id]=f});
+function titleOf(id){var q=E.byId(id);return q?q.title:id}
+function probChips(ids){return ids.filter(function(i){return E.byId(i)}).map(function(i){return '<button class="pp-chip" data-act="open" data-id="'+i+'">'+esc(titleOf(i))+'</button>'}).join(' ')}
+function tbl(head,rows,cls){return '<div class="pp-card pp-scroll"><table><thead><tr>'+head.map(function(h){return '<th>'+esc(h)+'</th>'}).join('')+'</tr></thead><tbody>'+rows.map(function(r){return '<tr>'+r.map(function(c,i){return '<td'+(i===0?'':' class="'+(cls||'')+'"')+'>'+(i===0?'<b>'+esc(c)+'</b>':esc(c))+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div>'}
+function lesson(x){
+  var le=(E.dsa.lessons||{})[x.id],h='';
+  if(le){h+='<h3>Mini-lesson</h3><p>'+esc(le.intuition)+'</p><h3>Template (C++)</h3><pre class="pp-code">'+esc(le.code)+'</pre><h3>Worked example</h3><p>'+esc(le.example)+'</p><h3>Variants and traps</h3>'+ul(le.variants)}
+  var rank={Easy:0,Medium:1,Hard:2},ids=x.probs.filter(function(i){return E.byId(i)}).map(function(i,k){return {i:i,k:k,d:rank[E.byId(i).diff]||0}}).sort(function(a,b){return a.d-b.d||a.k-b.k});
+  var st=E.store.get(),n=ids.filter(function(o){return st[o.i]&&st[o.i].solo}).length;
+  h+='<h3>Practice ladder, easy to hard <span class="pp-pill'+(n===ids.length&&n?' pp-good':'')+'">'+n+' of '+ids.length+' solved myself</span></h3><p>'+ids.map(function(o){var q=E.byId(o.i),done=st[o.i]&&st[o.i].solo;return '<button class="pp-chip" data-act="open" data-id="'+o.i+'">'+(done?'\u2713 ':'')+esc(q.title)+' <small>'+esc(q.diff)+'</small></button>'}).join(' ')+'</p>';
+  return h;
+}
+var COURSES=[
+ ['William Fiset: Data Structures Easy to Advanced (about 8 hours, free, YouTube)','https://www.youtube.com/watch?v=RBSGKlAvoiM','Arrays, lists, stacks, queues, heaps, trees, union-find, hash tables, Fenwick trees, AVL. One long video. Open the description and use "Show more" to look for chapter markers to jump to a topic. The per-topic video links inside each lesson are easier to use.'],
+ ['MIT 6.006 Introduction to Algorithms, Spring 2020 (free lectures and notes)','https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/','University level and rigorous. Good for sorting, hashing, trees, graphs, DP, and for reasoning about complexity.'],
+ ['NeetCode: Algorithms and Data Structures for Beginners','https://neetcode.io/courses/dsa-for-beginners/0','35 lessons following the same order as this course. Only the first 3 lessons are free; the rest need a paid plan.'],
+ ['VisuAlgo: animated visualisations','https://visualgo.net/en','Step through heaps, hash tables, BSTs, union-find, sorting, graphs. Use it beside the lesson.'],
+ ['USFCA Data Structure Visualizations (David Galles)','https://www.cs.usfca.edu/~galles/visualization/Algorithms.html','Simple animations with code-level steps for most structures in this course.'],
+ ['cp-algorithms: written articles','https://cp-algorithms.com/','Clear written explanations with proofs for union-find, Fenwick, segment tree, Dijkstra, binary search.']
+];
+var FIS='William Fiset',NC='NeetCode',AB='Abdul Bari';
+var VIDS={complexity:['big O notation time complexity',[NC,AB]],array:['dynamic array',[FIS,NC]],list:['linked list',[FIS,NC]],stackqueue:['stack and queue data structure',[FIS,NC]],hash:['hash table separate chaining',[FIS,NC]],recursion:['recursion',[NC,AB]],sorting:['merge sort quick sort',[NC,AB]],bsearch:['binary search',[NC,FIS]],tree:['binary tree traversal',[NC,FIS]],bst:['binary search tree insert remove',[FIS,NC]],heap:['priority queue heap',[FIS,NC]],trie:['trie prefix tree',[NC,FIS]],graph:['graph BFS DFS',[FIS,NC]],dsu:['union find disjoint set',[FIS,NC]],fenwick:['fenwick tree binary indexed tree',[FIS]],segtree:['segment tree',[FIS,NC]],dp:['dynamic programming',[NC,AB]],bits:['bit manipulation',[NC,FIS]]};
+function ytSearch(ch,q){return 'https://www.youtube.com/results?search_query='+encodeURIComponent(ch+' '+q)}
+function vidLinks(id){var v=VIDS[id];if(!v)return '';return '<h3>Videos for this topic</h3><p>'+v[1].map(function(c){return lnk(c+': '+v[0],ytSearch(c,v[0]))}).join('<br>')+'</p><p class="pp-hint">Opens YouTube search results for this exact topic on that channel. Pick any video you like.</p>'}
+function lnk(t,u){return '<a class="pp-link" href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(t)+' \u2197</a>'}
+function viewFound(){
+  var F=E.dsa.found,n=F.filter(function(x){return ST.learn[x.id]}).length;
+  var h='<p class="pp-hint">Never built a heap, a trie or union-find? Work down this list in order. Each lesson says what it is, how it works inside, shows a from-scratch C++ build, and links to a free visualisation or course. Every build here was compiled and tested.</p>';
+  h+='<h2>Your path <span class="pp-pill'+(n===F.length?' pp-good':'')+'">'+n+' of '+F.length+' can write it from memory</span></h2>';
+  F.forEach(function(x,i){
+    var rank={Easy:0,Medium:1,Hard:2},ids=(x.practice||[]).filter(function(k){return E.byId(k)}).map(function(k,j){return {i:k,j:j,d:rank[E.byId(k).diff]||0}}).sort(function(a,b){return a.d-b.d||a.j-b.j}),st=E.store.get();
+    h+='<details data-lf="'+x.id+'"'+(ST.lopen===x.id?' open':'')+'><summary><span>'+(i+1)+'. '+esc(x.title)+'</span><span class="pp-row"><span class="pp-pill">'+esc(x.tag)+'</span>'+(ST.learn[x.id]?'<span class="pp-pill pp-good">done</span>':'')+'</span></summary><div>'
+     +'<h3>What and why</h3><p>'+esc(x.why)+'</p><h3>How it works</h3>'+ul(x.how)+'<h3>Build it (C++)</h3><pre class="pp-code">'+esc(x.code)+'</pre><h3>What it costs</h3><p>'+esc(x.cost)+'</p><h3>Common mistakes</h3>'+ul(x.mistakes)
+     +(ids.length?'<h3>Then practise</h3><p>'+ids.map(function(o){var q=E.byId(o.i),d=st[o.i]&&st[o.i].solo;return '<button class="pp-chip" data-act="open" data-id="'+o.i+'">'+(d?'\u2713 ':'')+esc(q.title)+' <small>'+esc(q.diff)+'</small></button>'}).join(' ')+'</p>':'')
+     +vidLinks(x.id)+'<h3>Animations and reading</h3><p>'+x.links.map(function(l){return lnk(l.t,l.u)}).join('<br>')+'</p>'
+     +'<p><button class="pp-chip" data-lrn="'+x.id+'" aria-pressed="'+(!!ST.learn[x.id])+'">I can write this from memory</button></p></div></details>'});
+  h+='<h2>Free courses and tools</h2><p class="pp-hint">Links were checked to exist on 10 Oct 2026. Sites change, so tell me if one breaks.</p><div class="pp-card">'+COURSES.map(function(c){return '<p>'+lnk(c[0],c[1])+'<br><span class="pp-hint">'+esc(c[2])+'</span></p>'}).join('')+'</div>';
+  return h;
+}
+var FOUND_OF={array:'array',list:'list',hash:'hash',stack:'stackqueue',queue:'stackqueue',heap:'heap',tree:'bst',trie:'trie',dsu:'dsu',fenwick:'fenwick',graph:'graph',bsearch:'bsearch',dp:'dp',bits:'bits',treetrav:'tree',graphsearch:'graph',dsu2:'dsu',topk:'heap',backtrack:'recursion',hashing:'hash',twoptr:'array',window:'array',prefix:'array',mono:'stackqueue',ptrs:'list'};
+function learnChip(id){var k=FOUND_OF[id],f=k&&E.dsa.found.filter(function(x){return x.id===k})[0];return f?'<h3>New to this?</h3><p><button class="pp-chip" data-lopen="'+f.id+'">Learn it from scratch: '+esc(f.title)+'</button></p>':''}
+function viewDsa(){
+  var D=E.dsa,h='<p class="pp-hint">Interviewers ask "why this one?" as often as "what is the complexity?". For each structure and technique: what it costs, when to choose it, and what to say aloud. Problems link to the lab.</p>';
+  h+='<h2>If you see this, reach for that</h2>'+tbl(['Clue in the problem','Reach for','Why'],D.signals);
+  h+='<h2>How big is n? What can you afford</h2><p class="pp-hint">About 10^8 simple steps run in a second. Use this to reject an idea before coding it.</p>'+tbl(['Input size','Target complexity','Typical idea'],D.limits);
+  h+='<h2>Data structures <span class="pp-pill">'+D.ds.length+'</span></h2>';
+  D.ds.forEach(function(x){h+='<details data-ds="'+x.id+'"'+(ST.tool===x.id?' open':'')+'><summary><span>'+esc(x.name)+'</span><span class="pp-row"><span class="pp-pill">'+esc(x.tag)+'</span></span></summary><div>'
+    +'<h3>Cost</h3>'+tbl(['Operation','Time'],x.ops)+'<h3>Choose it when</h3>'+ul(x.use)+'<h3>Avoid it when</h3>'+ul(x.avoid)+'<h3>In code</h3><p>'+esc(x.lib)+'</p><h3>Watch out</h3><p>'+esc(x.trap)+'</p><h3>Problems that use it</h3><p>'+probChips(x.probs)+'</p>'+learnChip(x.id)+'</div></details>'});
+  h+='<h2>Techniques <span class="pp-pill">'+D.tech.length+'</span></h2>';
+  D.tech.forEach(function(x){h+='<details data-tech="'+x.id+'"'+(ST.tool===x.id?' open':'')+'><summary><span>'+esc(x.name)+'</span><span class="pp-row"><span class="pp-pill">'+esc(x.tag)+'</span></span></summary><div>'
+    +'<h3>Signals</h3>'+ul(x.sig)+'<h3>The idea</h3><p>'+esc(x.idea)+'</p><h3>Cost</h3><p class="pp-est">'+esc(x.cost)+'</p><h3>Watch out</h3><p>'+esc(x.trap)+'</p>'+lesson(x)+learnChip(x.id)+'</div></details>'});
+  h+='<h2>Sorting at a glance</h2>'+tbl(['Sort','Average','Worst','Stable','Note'],D.sorts);
+  h+='<h2>Say these aloud</h2><div class="pp-card">'+ul(D.pitfalls)+'</div>';
+  return h;
+}
+function toolFor(id){var D=E.dsa,o=[];if(!D)return o;D.tech.forEach(function(x){if(x.probs.indexOf(id)>=0)o.push({id:x.id,name:x.name})});return o}
 function viewFun(){
-  var h='<p class="pp-hint">Interviewers push on the reasons behind a design. For each topic: when you reach for it, what it costs, and the follow-up you will get. Tap a design below a topic to see where it is used.</p><h2>Fundamentals <span class="pp-pill">'+FUND.length+' topics</span></h2>';
+  var h='<p class="pp-hint">Interviewers push on the reasons behind a design. For each topic: when you reach for it, what it costs, and the follow-up you will get. Tap a design below a topic to see where it is used.</p><h2>Design basics <span class="pp-pill">'+FUND.length+' topics</span></h2>';
   FUND.forEach(function(f){var used=HLD.filter(function(d){return (NEEDS[d.id]||[]).indexOf(f.id)>=0});
    h+='<details data-f="'+f.id+'"'+(ST.fun===f.id?' open':'')+'><summary><span>'+esc(f.name)+'</span><span class="pp-row"><span class="pp-pill">'+esc(f.tag)+'</span></span></summary><div><p>'+esc(f.what)+'</p><h3>When to reach for it</h3>'+ul(f.use)+'<h3>Trade-offs</h3>'+ul(f.trade)+'<h3>Follow-ups they ask</h3>'+ul(f.ask)+'<h3>Used in</h3><p>'+used.map(function(d){return '<button class="pp-chip" data-hld="'+d.id+'">'+esc(d.name)+'</button>'}).join(' ')+'</p></div></details>'});
   return h;
@@ -7713,6 +8901,9 @@ function storyText(){return ST.stories.map(function(s){return (s.title||'Untitle
 document.addEventListener('click',function(e){
   if(!e.target.closest('.pp'))return;var el=e.target.closest('button,summary');if(!el)return;
   var d=el.dataset,d0=d;if(d0.ptab){ST.tab=d0.ptab;RR();return}
+  if(d0.lrn){ST.learn[d0.lrn]=!ST.learn[d0.lrn];ST.lopen=d0.lrn;save();RR();return}
+  if(d0.lopen){ST.tab='found';ST.lopen=d0.lopen;RR();var e5=document.querySelector('[data-lf="'+d0.lopen+'"]');if(e5)e5.scrollIntoView();return}
+  if(d0.dsaopen){ST.tab='dsa';ST.tool=d0.dsaopen;RR();return}
   if(d0.fun){ST.tab='fun';ST.fun=d0.fun;RR();var e3=document.querySelector('[data-f="'+d0.fun+'"]');if(e3)e3.scrollIntoView();return}
   if(d0.hrs){ST.plan.hrs=+d0.hrs;save();RR();return}
   if(d0.pck){ST.plan.ck[d0.pck]=!ST.plan.ck[d0.pck];save();RR();return}
@@ -7727,7 +8918,7 @@ document.addEventListener('click',function(e){
   if(d.q!==undefined){var l=Math.floor(Math.random()*LPS.length);ST.q={i:l,n:LPS[l].n,q:LPS[l].q};ST.qLeft=120;clearInterval(ST.qTimer);ST.qTimer=setInterval(function(){if(ST.qLeft>0)ST.qLeft--;var t=$('tm');if(t)t.textContent=clk(ST.qLeft);if(!ST.qLeft)clearInterval(ST.qTimer)},1000);RR();return}
 });
 document.addEventListener('change',function(e){var t=e.target;if(t&&t.dataset&&t.dataset.pl==='date'){ST.plan.date=t.value;save();RR()}});
-document.addEventListener('toggle',function(e){var el=e.target;if(!el.closest||!el.closest('.pp'))return;if(el.dataset&&el.dataset.d&&el.open)ST.design=el.dataset.d;if(el.dataset&&el.dataset.f&&el.open)ST.fun=el.dataset.f},true);
+document.addEventListener('toggle',function(e){var el=e.target;if(!el.closest||!el.closest('.pp'))return;if(el.dataset&&el.dataset.d&&el.open)ST.design=el.dataset.d;if(el.dataset&&el.dataset.f&&el.open)ST.fun=el.dataset.f;if(el.dataset&&(el.dataset.ds||el.dataset.tech)&&el.open)ST.tool=el.dataset.ds||el.dataset.tech;if(el.dataset&&el.dataset.lf&&el.open)ST.lopen=el.dataset.lf},true);
 document.addEventListener('input',function(e){if(!e.target.closest||!e.target.closest('.pp'))return;var f=e.target.dataset&&e.target.dataset.f;if(!f)return;var s=ST.stories.filter(function(x){return x.id===ST.sel})[0];if(s){s[f]=e.target.value;save()}});
 
 
@@ -7783,8 +8974,8 @@ function viewPlan(){
   h+='<p class="pp-hint" style="margin-top:14px">Last week is for mocks and review only, so no new topics. Finish a problem by ticking "I solved it myself" on its page.</p>';
   return h}
 
-function view(){return '<div class="pp"><h1 class="pp-h1">System design and behavioral</h1><div class="pp-tabs" role="tablist"><button class="pp-tab" role="tab" data-ptab="hld" aria-selected="'+(ST.tab==='hld')+'">System design</button><button class="pp-tab" role="tab" data-ptab="fun" aria-selected="'+(ST.tab==='fun')+'">Fundamentals</button><button class="pp-tab" role="tab" data-ptab="beh" aria-selected="'+(ST.tab==='beh')+'">Behavioral</button><button class="pp-tab" role="tab" data-ptab="plan" aria-selected="'+(ST.tab==='plan')+'">Study plan</button></div>'+(ST.tab==='hld'?viewHld():ST.tab==='fun'?viewFun():ST.tab==='beh'?viewBeh():viewPlan())+'</div>'}
-E.prep={designs:function(){return HLD},lps:function(){return LPS},storiesFor:function(i){return storiesFor(i)},mk:function(k){return ST.mk[k]||null},weakCount:function(pre){return Object.keys(ST.mk).filter(function(k){return k.indexOf(pre)===0&&ST.mk[k].weak}).length},doneCount:function(pre){return Object.keys(ST.mk).reduce(function(a,k){return a+(k.indexOf(pre)===0?(ST.mk[k].n||0):0)},0)},record:function(k,weak){var m=ST.mk[k]||{n:0};m.n=(m.n||0)+1;m.weak=weak;ST.mk[k]=m;if(k.indexOf('sd:')===0&&!weak)ST.done[k.slice(3)]=true;save()},view:view,bind:function(f){RR=f},questions:function(){return LPS.map(function(l,i){return{i:i,n:l.n,q:l.q}})}};
+function view(){return '<div class="pp"><h1 class="pp-h1">Interview prep</h1><div class="pp-tabs" role="tablist"><button class="pp-tab" role="tab" data-ptab="hld" aria-selected="'+(ST.tab==='hld')+'">System design</button><button class="pp-tab" role="tab" data-ptab="fun" aria-selected="'+(ST.tab==='fun')+'">Design basics</button><button class="pp-tab" role="tab" data-ptab="found" aria-selected="'+(ST.tab==='found')+'">DSA foundations</button><button class="pp-tab" role="tab" data-ptab="dsa" aria-selected="'+(ST.tab==='dsa')+'">DSA toolkit</button><button class="pp-tab" role="tab" data-ptab="beh" aria-selected="'+(ST.tab==='beh')+'">Behavioral</button><button class="pp-tab" role="tab" data-ptab="plan" aria-selected="'+(ST.tab==='plan')+'">Study plan</button></div>'+(ST.tab==='hld'?viewHld():ST.tab==='fun'?viewFun():ST.tab==='found'?viewFound():ST.tab==='dsa'?viewDsa():ST.tab==='beh'?viewBeh():viewPlan())+'</div>'}
+E.prep={toolFor:toolFor,openFound:function(id){ST.tab='found';ST.lopen=id},foundCount:function(){return E.dsa.found.filter(function(x){return ST.learn[x.id]}).length},openTool:function(id){ST.tab='dsa';ST.tool=id},designs:function(){return HLD},lps:function(){return LPS},storiesFor:function(i){return storiesFor(i)},mk:function(k){return ST.mk[k]||null},weakCount:function(pre){return Object.keys(ST.mk).filter(function(k){return k.indexOf(pre)===0&&ST.mk[k].weak}).length},doneCount:function(pre){return Object.keys(ST.mk).reduce(function(a,k){return a+(k.indexOf(pre)===0?(ST.mk[k].n||0):0)},0)},record:function(k,weak){var m=ST.mk[k]||{n:0};m.n=(m.n||0)+1;m.weak=weak;ST.mk[k]=m;if(k.indexOf('sd:')===0&&!weak)ST.done[k.slice(3)]=true;save()},view:view,bind:function(f){RR=f},questions:function(){return LPS.map(function(l,i){return{i:i,n:l.n,q:l.q}})}};
 })();
 
 /* App shell: views, routing, events. Uses E (engine) and E.problems (data files). */
@@ -7963,6 +9154,7 @@ function viewHome(){
 /* ---------- company tags ---------- */
 function coOf(p,c){var t=E.co&&E.co.t[p.id];return t&&t[c]||null}
 function coSel(cur,act){if(!E.co)return '';return '<select class="sel" data-sel="'+act+'" aria-label="Company">'+['Any'].concat(E.co.names).map(function(c){return '<option value="'+esc(c)+'"'+(c===cur?' selected':'')+'>'+(c==='Any'?'Any company':esc(c))+'</option>'}).join('')+'</select>'}
+function toolRow(p){var t=E.prep&&E.prep.toolFor?E.prep.toolFor(p.id):[];if(!t.length)return '';return '<div class="coq"><span class="label">Toolkit</span><div class="chips">'+t.map(function(x){return '<button class="chip" data-act="tool" data-t="'+x.id+'" type="button">'+esc(x.name)+'</button>'}).join('')+'</div></div>'}
 function coRow(p){
   var t=E.co&&E.co.t[p.id];if(!t)return '';
   var all=Object.keys(t).map(function(c){return {c:c,f:t[c][0],w:t[c][1]}}).sort(function(a,b){return b.f-a.f});
@@ -7992,7 +9184,7 @@ function practiceRow(p){
 function viewProblem(){
   var p=prob(),tabs=[['learn','Learn'],['run','Run'],['predict','Predict'],['twists','Twists']];
   return '<button class="back" data-act="home" type="button">← All problems</button>'+
-    '<div><p class="eyebrow">'+esc(p.topic)+' · '+esc(p.ref)+'</p><h1>'+esc(p.title)+'</h1><div class="row" style="margin-top:8px"><span class="pill '+diffCls(p.diff)+'">'+esc(p.diff)+'</span><span class="stat">Pattern: '+esc(p.pattern)+'</span></div>'+practiceRow(p)+coRow(p)+'</div>'+
+    '<div><p class="eyebrow">'+esc(p.topic)+' · '+esc(p.ref)+'</p><h1>'+esc(p.title)+'</h1><div class="row" style="margin-top:8px"><span class="pill '+diffCls(p.diff)+'">'+esc(p.diff)+'</span><span class="stat">Pattern: '+esc(p.pattern)+'</span></div>'+practiceRow(p)+toolRow(p)+coRow(p)+'</div>'+
     '<div class="tabs" role="tablist" aria-label="Steps">'+tabs.map(function(t){return '<button class="tab" role="tab" data-act="tab" data-t="'+t[0]+'" aria-selected="'+(S.tab===t[0])+'" type="button">'+t[1]+'</button>'}).join('')+'</div>'+
     '<div class="panel" id="pbody">'+tabHtml(p)+'</div>';
 }
@@ -8351,6 +9543,7 @@ document.addEventListener('click',function(e){
   if(S.view==='problem'&&S.tab==='twists')S.idle=Date.now();
   if(a==='mock')return goMock();
   if(a==='prep')return goPrep();
+  if(a==='tool'){E.prep.openTool(b.dataset.t);return goPrep()}
   if(a==='mmode'){S.mock.mode=b.dataset.m;S.mock.mins=b.dataset.m==='sd'?45:b.dataset.m==='beh'?10:30;S.mock.msg='';return render()}
   if(a==='mtopic'){S.mock.topic=b.dataset.t;return render()}
   if(a==='mdiff'){S.mock.diff=b.dataset.d;return render()}
