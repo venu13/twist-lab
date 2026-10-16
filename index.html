@@ -337,6 +337,84 @@ textarea{width:100%;min-height:100px;border:1px solid var(--line);border-radius:
 .plnote{margin:0;line-height:1.4}
 .pract .check{margin:0}
 
+/* batch 45: five-tab layout */
+.bar .wrap{justify-content:flex-start}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--bg);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabbar .wrap{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;padding-block:6px}
+.tbtn{min-height:50px;border:0;border-radius:10px;background:none;color:var(--muted);font:600 11.5px var(--font-body);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;padding:2px}
+.tbtn[aria-current="true"]{color:var(--accent);background:var(--accent-soft)}
+main{padding-bottom:90px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.sech{font:700 22px/1.15 var(--font-display);margin:0}
+.tracks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.track{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:500 13px/1.35 var(--font-body);cursor:pointer;min-height:76px}
+.track b{font:700 15px var(--font-display)}
+.track span{color:var(--muted);font-size:12.5px}
+@media (max-width:360px){.tracks{grid-template-columns:1fr}}
+/* ===== v45 polish: professional learning-app look ===== */
+:root{
+  --bg:#F5F6FB; --surface:#FFFFFF; --ink:#131A2B; --muted:#5B6579; --line:#E1E5EF;
+  --accent:#4F46E5; --accent-soft:#EAE9FD; --on-accent:#FFFFFF;
+  --shadow:0 1px 2px rgba(20,28,60,.05),0 6px 18px -8px rgba(20,28,60,.14);
+  --grad:linear-gradient(135deg,#4F46E5 0%,#7C3AED 55%,#0EA5E9 120%);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0C111D;--surface:#151C2C;--ink:#E8ECF6;--muted:#9AA6BD;--line:#242E44;--accent:#8B93FF;--accent-soft:#222A55;--on-accent:#0C111D;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px -10px rgba(0,0,0,.6);--grad:linear-gradient(135deg,#3730A3 0%,#5B21B6 55%,#0369A1 120%)}}
+:root[data-theme="dark"]{--bg:#0C111D;--surface:#151C2C;--ink:#E8ECF6;--muted:#9AA6BD;--line:#242E44;--accent:#8B93FF;--accent-soft:#222A55;--on-accent:#0C111D;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px -10px rgba(0,0,0,.6);--grad:linear-gradient(135deg,#3730A3 0%,#5B21B6 55%,#0369A1 120%)}
+body{font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.bar{background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font:700 17px/1 var(--font-display)}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--grad);color:#fff;display:grid;place-items:center;box-shadow:0 4px 10px -3px rgba(79,70,229,.55)}
+h1{font-size:28px;letter-spacing:-.02em}
+h2{letter-spacing:-.01em}
+.card{border-radius:16px;box-shadow:var(--shadow);border-color:var(--line);padding:16px}
+.btn{border-radius:12px;font-weight:600;transition:transform .12s,box-shadow .12s,background .12s}
+.btn:hover{box-shadow:0 2px 8px -2px rgba(20,28,60,.2)}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 6px 14px -6px rgba(79,70,229,.6)}
+.chip{border-radius:999px;transition:background .12s,border-color .12s}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.prow{border-radius:14px;box-shadow:var(--shadow);transition:transform .12s,border-color .12s}
+.prow:hover{border-color:var(--accent);transform:translateY(-1px)}
+.pill{border-radius:999px}
+.pp-meter{height:8px;border-radius:99px;background:var(--accent-soft);overflow:hidden}
+.pp-meter i{display:block;height:100%;border-radius:99px;background:var(--grad)}
+/* hero */
+.hero{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px;border-radius:20px;background:var(--grad);color:#fff;box-shadow:0 14px 30px -14px rgba(79,70,229,.7);position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-40px;top:-60px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.1);pointer-events:none}
+.hero .eyebrow,.hero .sub,.hero h1{color:#fff}
+.hero .eyebrow{opacity:.8}.hero .sub{opacity:.9}
+.hero-t{min-width:0;position:relative;z-index:1}
+.ring{position:relative;flex:none;width:76px;height:76px;color:#fff;display:grid;place-items:center;z-index:1}
+.ring svg{position:absolute;inset:0}
+.ring b{font:700 17px/1 var(--font-display);margin-top:-6px}
+.ring span{position:absolute;bottom:17px;font:500 9px var(--font-mono);text-transform:uppercase;letter-spacing:.08em;opacity:.85}
+/* tracks */
+.track{border-radius:16px;box-shadow:var(--shadow);transition:transform .12s,border-color .12s;gap:6px;padding:14px}
+.track:hover{transform:translateY(-1px);border-color:var(--accent)}
+.ti{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;margin-bottom:4px;color:#fff}
+.t-dsa{background:linear-gradient(135deg,#6366F1,#4338CA)}
+.t-sd{background:linear-gradient(135deg,#0EA5E9,#0369A1)}
+.t-and{background:linear-gradient(135deg,#10B981,#047857)}
+.t-bp{background:linear-gradient(135deg,#F59E0B,#B45309)}
+/* tab bar */
+.tabbar{background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 -6px 20px -12px rgba(20,28,60,.25)}
+.tbtn[aria-current="true"]{color:var(--accent);background:var(--accent-soft)}
+/* wide screens: left rail + roomier content */
+@media (min-width:900px){
+  .wrap{max-width:1000px}
+  main{padding-left:92px}
+  .tabbar{top:0;bottom:auto;right:auto;width:92px;height:100vh;border-top:0;border-right:1px solid var(--line);box-shadow:none;padding:70px 0 0}
+  .tabbar .wrap{display:flex;flex-direction:column;gap:8px;max-width:none;padding:8px}
+  .tbtn{min-height:62px}
+  .bar{padding-left:92px}
+  .brand{margin-left:0}
+  .tracks{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .plist{grid-template-columns:repeat(2,minmax(0,1fr))}
+  main{padding-bottom:30px}
+}
+@media (max-width:360px){.hero{padding:16px}.ring{display:none}}
+.track .ti{color:#fff;font-size:0}
+
 </style>
 </head>
 <body>
@@ -13277,7 +13355,7 @@ E.andr=[
  pts:['Clarify: cameras (front, rear, USB), resolution and frame rate, continuous or event only, storage (internal or USB), retention, audio, privacy, boot to recording time.','Capture: a camera source feeding a hardware encoder (MediaCodec) through a surface, so frames avoid CPU copies.','Container: write short fragmented segments (for example one minute), so an abrupt power cut loses seconds, not the file.','Storage: a ring of segments with a free-space watermark. Delete oldest unlocked segment first. Never delete a locked one.','Events: an impact signal from vehicle sensors locks the segment before and after the event.','Power: on shutdown-prepare, flush and close the file, then signal done. Handle ignition on fast so recording starts early.','Safety: playback or review UI follows driving-state restrictions; recording itself needs no UI.','Observability: dropped frames, encoder errors, write latency, free space, segment count.'],
  fu:[['The USB drive is pulled mid-write?','Detect unmount, close the segment, switch to internal storage if allowed, and surface a warning. Never block the capture thread on storage.'],['Encoder stalls?','Watchdog on frame timestamps. Restart the encoder and start a new segment.'],['How to prove no frame loss?','Check timestamps for gaps, count dropped buffers, and run long soak tests with power cycling.']],
  trap:'Starting with the UI. The hard parts are storage, power and recovery.',
- unv:['This is a design I wrote from general principles. Replace details with what you actually built or learned on DA3.'],
+ unv:['This is a design I wrote from general principles. Replace details with what you actually built or learned in your own projects.'],
  src:[['Vehicle power management',AD+'automotive/power'],['Car UX Restrictions',AD+'automotive/driver_distraction/car_uxr']]},
 {id:'media',sec:S3,q:'Design a media player on a head unit that stays reliable with corrupt or unsupported files from USB.',
  tests:'Fault isolation in a pipeline where one bad input must not stop the product.',
@@ -13285,7 +13363,7 @@ E.andr=[
  pts:['Clarify: formats, sources (USB, phone, streaming), library size, scan time target, behaviour on error.','Scan: index metadata into a database. A crash in a parser must not take down the media process, so probe in an isolated process.','Quarantine: store path, size and modified time. Skip files that failed and have not changed. Retry when the fingerprint changes.','Playback: on a decoder or source error, log it, mark the file, move to the next item. Cap consecutive failures so a bad drive does not loop forever.','UI: show the track as unavailable rather than hiding it silently. Never show a raw error code.','Metrics: scan time per 1,000 files, failure rate by format, crash-free playback sessions.'],
  fu:[['How do you avoid rescanning 50,000 files each boot?','Incremental scan using the fingerprint and a volume identifier. Only changed or new files are probed.'],['A file passes the scan but fails to play?','Playback is the real test. Feed the failure back into the quarantine so the next scan skips it.'],['Why a separate process?','A native parser crash would otherwise kill playback and the UI together.']],
  trap:'Trusting the extension. Probe content, not names.',
- unv:['General design, not tied to your DA3 implementation. Replace with your real layers and numbers.'],
+ unv:['General design, not tied to any specific product. Replace with your real layers and numbers.'],
  src:[]}
 ];
 })();
@@ -13726,7 +13804,7 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return
 function ul(a){return '<ul>'+a.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>'}
 var $=function(id){return document.getElementById(id)};var RR=function(){};
 function viewHld(){
-  var h='<h2>The 45 minutes</h2><div class="pp-clock">'+[['5 min','Requirements and scope'],['5 min','Estimates'],['5 min','API and data model'],['10 min','High-level diagram'],['15 min','Deep dive on 1 or 2 parts'],['5 min','Bottlenecks and trade-offs']].map(function(x){return '<div><b>'+x[0]+'</b><span>'+x[1]+'</span></div>'}).join('')+'</div>';
+  var h='<p class="pp-hint">New to this? Read the <button class="pp-chip" data-ptab="fun">Basics</button> first, then come back here.</p><h2>The 45 minutes</h2><div class="pp-clock">'+[['5 min','Requirements and scope'],['5 min','Estimates'],['5 min','API and data model'],['10 min','High-level diagram'],['15 min','Deep dive on 1 or 2 parts'],['5 min','Bottlenecks and trade-offs']].map(function(x){return '<div><b>'+x[0]+'</b><span>'+x[1]+'</span></div>'}).join('')+'</div>';
   h+='<p class="pp-hint">At senior level the interviewer wants you to drive. Ask the clarifying questions, state numbers, pick a direction, and name what you gave up. Say the trade-off out loud every time you choose.</p>';
   var n=Object.keys(ST.done).filter(function(k){return ST.done[k]}).length;
   h+='<h2>Classic designs <span class="pp-pill '+(n===HLD.length?'pp-good':'')+'">'+n+' of '+HLD.length+' can explain</span></h2>';
@@ -13765,14 +13843,15 @@ var VIDS={complexity:['big O notation time complexity',[NC,AB]],array:['dynamic 
 function ytSearch(ch,q){return 'https://www.youtube.com/results?search_query='+encodeURIComponent(ch+' '+q)}
 function vidLinks(id){var v=VIDS[id];if(!v)return '';return '<h3>Videos for this topic</h3><p>'+v[1].map(function(c){return lnk(c+': '+v[0],ytSearch(c,v[0]))}).join('<br>')+'</p><p class="pp-hint">Opens YouTube search results for this exact topic on that channel. Pick any video you like.</p>'}
 function lnk(t,u){return '<a class="pp-link" href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(t)+' \u2197</a>'}
+function stageLink(id){var k=-1;E.road.forEach(function(r,i){if(k<0&&r.found.indexOf(id)>=0)k=i});if(k<0)return '<p class="pp-hint">Reference guide. Not tied to one stage of the study plan.</p>';return '<p><button class="pp-chip" data-rsopen="'+E.road[k].id+'">Part of study plan stage '+(k+1)+': '+esc(E.road[k].title)+'</button></p>'}
 function viewFound(){
   var F=E.dsa.found,n=F.filter(function(x){return ST.learn[x.id]}).length;
-  var h='<p class="pp-hint">Never built a heap, a trie or union-find? Work down this list in order. Each lesson says what it is, how it works inside, shows a from-scratch C++ build, and links to a free visualisation or course. Every build here was compiled and tested.</p>';
-  h+='<h2>Your path <span class="pp-pill'+(n===F.length?' pp-good':'')+'">'+n+' of '+F.length+' can write it from memory</span></h2>';
+  var h='<p class="pp-hint">New to a heap, a trie or union-find? Open its guide and read top to bottom, or follow the Study plan to meet them in a good order. Each guide says what it is, how it works inside, shows a from-scratch C++ build, and links to a free visualisation or course. Every build here was compiled and tested.</p>';
+  h+='<h2>All guides <span class="pp-pill'+(n===F.length?' pp-good':'')+'">'+n+' of '+F.length+' can write it from memory</span></h2>';
   F.forEach(function(x,i){
     var rank={Easy:0,Medium:1,Hard:2},ids=(x.practice||[]).filter(function(k){return E.byId(k)}).map(function(k,j){return {i:k,j:j,d:rank[E.byId(k).diff]||0}}).sort(function(a,b){return a.d-b.d||a.j-b.j}),st=E.store.get();
     h+='<details data-lf="'+x.id+'"'+(ST.lopen===x.id?' open':'')+'><summary><span>'+(i+1)+'. '+esc(x.title)+'</span><span class="pp-row"><span class="pp-pill">'+esc(x.tag)+'</span>'+(ST.learn[x.id]?'<span class="pp-pill pp-good">done</span>':'')+'</span></summary><div>'
-     +'<h3>What and why</h3><p>'+esc(x.why)+'</p><h3>How it works</h3>'+ul(x.how)+'<h3>Build it (C++)</h3><pre class="pp-code">'+esc(x.code)+'</pre><h3>What it costs</h3><p>'+esc(x.cost)+'</p><h3>Common mistakes</h3>'+ul(x.mistakes)
+     +stageLink(x.id)+'<h3>What and why</h3><p>'+esc(x.why)+'</p><h3>How it works</h3>'+ul(x.how)+'<h3>Build it (C++)</h3><pre class="pp-code">'+esc(x.code)+'</pre><h3>What it costs</h3><p>'+esc(x.cost)+'</p><h3>Common mistakes</h3>'+ul(x.mistakes)
      +(ids.length?'<h3>Then practise</h3><p>'+ids.map(function(o){var q=E.byId(o.i),d=st[o.i]&&st[o.i].solo;return '<button class="pp-chip" data-act="open" data-id="'+o.i+'">'+(d?'\u2713 ':'')+esc(q.title)+' <small>'+esc(q.diff)+'</small></button>'}).join(' ')+'</p>':'')
      +vidLinks(x.id)+'<h3>Animations and reading</h3><p>'+x.links.map(function(l){return lnk(l.t,l.u)}).join('<br>')+'</p>'
      +'<p><button class="pp-chip" data-lrn="'+x.id+'" aria-pressed="'+(!!ST.learn[x.id])+'">I can write this from memory</button></p></div></details>'});
@@ -13800,6 +13879,7 @@ function viewFun(){
   var h='<p class="pp-hint">Interviewers push on the reasons behind a design. For each topic: when you reach for it, what it costs, and the follow-up you will get. Tap a design below a topic to see where it is used.</p><h2>Design basics <span class="pp-pill">'+FUND.length+' topics</span></h2>';
   FUND.forEach(function(f){var used=HLD.filter(function(d){return (NEEDS[d.id]||[]).indexOf(f.id)>=0});
    h+='<details data-f="'+f.id+'"'+(ST.fun===f.id?' open':'')+'><summary><span>'+esc(f.name)+'</span><span class="pp-row"><span class="pp-pill">'+esc(f.tag)+'</span></span></summary><div><p>'+esc(f.what)+'</p><h3>When to reach for it</h3>'+ul(f.use)+'<h3>Trade-offs</h3>'+ul(f.trade)+'<h3>Follow-ups they ask</h3>'+ul(f.ask)+'<h3>Used in</h3><p>'+used.map(function(d){return '<button class="pp-chip" data-hld="'+d.id+'">'+esc(d.name)+'</button>'}).join(' ')+'</p></div></details>'});
+  h+='<p class="pp-hint">Ready? Put the basics to work on a full design.</p><p><button class="pp-chip" data-ptab="hld">Next: Case studies</button></p>';
   return h;
 }
 function viewBeh(){
@@ -13833,6 +13913,7 @@ document.addEventListener('click',function(e){
   var d=el.dataset,d0=d;if(d0.ptab){ST.tab=d0.ptab;RR();return}
   if(d0.pgrp){var gg=GROUPS.filter(function(x){return x.id===d0.pgrp})[0];ST.tab=ST.gl[gg.id]||gg.tabs[0][0];RR();return}
   if(d0.lrn){ST.learn[d0.lrn]=!ST.learn[d0.lrn];ST.lopen=d0.lrn;save();RR();return}
+  if(d0.rsopen){ST.tab='road';ST.road=d0.rsopen;RR();var e6=document.querySelector('[data-rs="'+d0.rsopen+'"]');if(e6)e6.scrollIntoView();return}
   if(d0.lopen){ST.tab='found';ST.lopen=d0.lopen;RR();var e5=document.querySelector('[data-lf="'+d0.lopen+'"]');if(e5)e5.scrollIntoView();return}
   function dd(id){var x=ST.sdp.d[id];if(!x)x=ST.sdp.d[id]={est:{},dec:{},brk:{}};return x}
   if(d0.tqcheck){var inp=document.getElementById('tq-in'),v=inp?inp.value:'',gr=E.sdrill.grade(ST.tq.g.ans,v);ST.tq.val=v;ST.tq.res=gr;if(gr!=='bad'){ST.sdp.n++;if(gr==='exact'||gr==='close'){ST.sdp.ok++;ST.sdp.streak++;if(ST.sdp.streak>ST.sdp.best)ST.sdp.best=ST.sdp.streak}else ST.sdp.streak=0;save()}RR();return}
@@ -13925,14 +14006,14 @@ function viewRoad(){
   var R=E.road,S=R.map(roadStat),cur=-1;for(var i=0;i<S.length;i++){if(!S[i].done){cur=i;break}}
   var tot=0,sol=0;R.forEach(function(r,k){tot+=S[k].n;sol+=S[k].solo});
   var h='<p class="pp-hint">Start at stage 1 and work down. Each stage: learn the idea, then solve its problems from easiest to hardest. A stage is done when you have learned its lessons and solved 70% of its problems yourself. Later stages stay open, so you can jump ahead.</p>';
-  h+='<div class="pp-card"><div class="pp-bar"><b>'+sol+' of '+tot+' solved myself</b><span class="pp-pill">'+S.filter(function(x){return x.done}).length+' of '+R.length+' stages done</span>'+(cur>=0?'<span class="pp-pill pp-good">You are here: stage '+(cur+1)+'</span>':'<span class="pp-pill pp-good">Roadmap complete</span>')+'</div><div class="pp-meter" role="img" aria-label="'+sol+' of '+tot+' solved"><i style="width:'+Math.round(100*sol/tot)+'%"></i></div></div>';
+  h+='<div class="pp-card"><div class="pp-bar"><b>'+sol+' of '+tot+' solved myself</b><span class="pp-pill">'+S.filter(function(x){return x.done}).length+' of '+R.length+' stages done</span>'+(cur>=0?'<span class="pp-pill pp-good">You are here: stage '+(cur+1)+'</span>':'<span class="pp-pill pp-good">Study plan complete</span>')+'</div><div class="pp-meter" role="img" aria-label="'+sol+' of '+tot+' solved"><i style="width:'+Math.round(100*sol/tot)+'%"></i></div></div>';
   var st=E.store.get(),rank={Easy:0,Medium:1,Hard:2};
   R.forEach(function(r,k){
     var s=S[k],open=ST.road===r.id||(ST.road==null&&k===cur);
     h+='<details data-rs="'+r.id+'"'+(open?' open':'')+'><summary><span>'+(k+1)+'. '+esc(r.title)+'</span><span class="pp-row">'+(s.done?'<span class="pp-pill pp-good">done</span>':k===cur?'<span class="pp-pill pp-warn">current</span>':'')+'<span class="pp-pill">'+s.solo+'/'+s.n+'</span></span></summary><div>'
      +'<p>'+esc(r.why)+'</p><p class="pp-hint">Interview signal: '+esc(r.sig)+'</p>'
      +'<div class="pp-meter" role="img" aria-label="'+s.solo+' of '+s.n+' solved"><i style="width:'+Math.round(100*s.solo/s.n)+'%"></i></div>';
-    var learn=r.found.map(function(f){var x=E.dsa.found.filter(function(y){return y.id===f})[0];return '<button class="pp-chip" data-lopen="'+f+'">'+(ST.learn[f]?'✓ ':'')+'Lesson: '+esc(x.title)+'</button>'}).concat(r.tech.map(function(t){var x=E.dsa.tech.filter(function(y){return y.id===t})[0];return '<button class="pp-chip" data-dsaopen="'+t+'">Technique: '+esc(x.title||x.name||t)+'</button>'}));
+    var learn=r.found.map(function(f){var x=E.dsa.found.filter(function(y){return y.id===f})[0];return '<button class="pp-chip" data-lopen="'+f+'">'+(ST.learn[f]?'✓ ':'')+'Concept guide: '+esc(x.title)+'</button>'}).concat(r.tech.map(function(t){var x=E.dsa.tech.filter(function(y){return y.id===t})[0];return '<button class="pp-chip" data-dsaopen="'+t+'">Technique: '+esc(x.title||x.name||t)+'</button>'}));
     h+='<h3>Step 1: learn it</h3>'+(learn.length?'<p>'+learn.join(' ')+'</p>':'<p class="pp-hint">No separate lesson. The problems below teach it. Open the first one and read the idea line.</p>');
     var ids=r.probs.map(function(p,j){return {i:p,j:j}});
     h+='<h3>Step 2: solve in this order</h3><p>'+ids.map(function(o){var q=E.byId(o.i),d=st[o.i]&&st[o.i].solo;return '<button class="pp-chip" data-act="open" data-id="'+o.i+'">'+(d?'✓ ':(o.j+1)+'. ')+esc(q.title)+' <small>'+esc(q.diff)+(starOf(o.i)?' ★':'')+'</small></button>'}).join(' ')+'</p>'
@@ -13992,15 +14073,31 @@ function viewDrill(){
     h+=(done?'<p><button class="pp-chip" data-dreset="'+d.id+'">Reset this drill</button></p>':'')+'</div></details>'});
   return h;
 }
-var GROUPS=[{id:'dsa',n:'DSA',tabs:[['road','Roadmap'],['found','Foundations'],['dsa','Toolkit']]},{id:'sd',n:'System design',tabs:[['hld','Designs'],['fun','Design basics'],['drill','Drills']]},{id:'and',n:'Android / AAOS',tabs:[['and','Interview cards']]},{id:'bp',n:'Behavioral and plan',tabs:[['beh','Behavioral'],['plan','Study plan']]}];
+var GROUPS=[{id:'dsa',n:'DSA',tabs:[['road','Study plan'],['found','Concept guides'],['dsa','Cheat sheet']]},{id:'sd',n:'System design',tabs:[['fun','Basics'],['hld','Case studies']]},{id:'and',n:'Android / AAOS',tabs:[['and','Interview cards']]},{id:'bp',n:'Behavioral and plan',tabs:[['beh','Behavioral'],['plan','Study plan']]}];
 ST.gl=ST.gl||{};
 function groupOf(t){return GROUPS.filter(function(g){return g.tabs.some(function(x){return x[0]===t})})[0]||GROUPS[0]}
 function view(){
   var g=groupOf(ST.tab);ST.gl[g.id]=ST.tab;
-  var h='<div class="pp"><h1 class="pp-h1">Interview prep</h1><div class="pp-tabs" role="tablist" aria-label="Section">'+GROUPS.map(function(x){return '<button class="pp-tab" role="tab" data-pgrp="'+x.id+'" aria-selected="'+(x.id===g.id)+'">'+x.n+'</button>'}).join('')+'</div>';
+  var h='<div class="pp"><h1 class="pp-h1">Learn</h1><p class="pp-hint">Pick a track. Each one is a path: learn the idea first, then practise it on the Practice tab.</p><div class="pp-tabs" role="tablist" aria-label="Section">'+GROUPS.map(function(x){return '<button class="pp-tab" role="tab" data-pgrp="'+x.id+'" aria-selected="'+(x.id===g.id)+'">'+x.n+'</button>'}).join('')+'</div>';
   if(g.tabs.length>1)h+='<div class="pp-tabs pp-subtabs" role="tablist" aria-label="'+esc(g.n)+'">'+g.tabs.map(function(x){return '<button class="pp-tab pp-sub" role="tab" data-ptab="'+x[0]+'" aria-selected="'+(ST.tab===x[0])+'">'+x[1]+'</button>'}).join('')+'</div>';
+  var TH={fun:'Start here. The building blocks (cache, queue, sharding, consistency) and the trade-offs behind them.',hld:'Then practise. Full designs like a URL shortener or chat app, in the 45-minute interview flow.',road:'Not sure where to start? Follow this plan, one stage at a time.',found:'Want to understand one topic, like a heap or a trie? Look it up here.',dsa:'In a hurry? Quick tables: which tool to reach for, and what each costs.'};if(TH[ST.tab])h+='<p class="pp-hint pp-tabhint"><b>'+esc(g.tabs.filter(function(x){return x[0]===ST.tab})[0][1])+':</b> '+TH[ST.tab]+'</p>';
   return h+(ST.tab==='road'?viewRoad():ST.tab==='drill'?viewDrill():ST.tab==='and'?viewAnd():ST.tab==='hld'?viewHld():ST.tab==='fun'?viewFun():ST.tab==='found'?viewFound():ST.tab==='dsa'?viewDsa():ST.tab==='beh'?viewBeh():viewPlan())+'</div>'}
 E.prep={toolFor:toolFor,openFound:function(id){ST.tab='found';ST.lopen=id},foundCount:function(){return E.dsa.found.filter(function(x){return ST.learn[x.id]}).length},openTool:function(id){ST.tab='dsa';ST.tool=id},designs:function(){return HLD},lps:function(){return LPS},storiesFor:function(i){return storiesFor(i)},mk:function(k){return ST.mk[k]||null},weakCount:function(pre){return Object.keys(ST.mk).filter(function(k){return k.indexOf(pre)===0&&ST.mk[k].weak}).length},doneCount:function(pre){return Object.keys(ST.mk).reduce(function(a,k){return a+(k.indexOf(pre)===0?(ST.mk[k].n||0):0)},0)},record:function(k,weak){var m=ST.mk[k]||{n:0};m.n=(m.n||0)+1;m.weak=weak;ST.mk[k]=m;if(k.indexOf('sd:')===0&&!weak)ST.done[k.slice(3)]=true;save()},view:view,bind:function(f){RR=f},questions:function(){return LPS.map(function(l,i){return{i:i,n:l.n,q:l.q}})}};
+
+function roadNext(){
+  var R=E.road,st=E.store.get(),cur=-1,i;
+  var S2=R.map(roadStat);for(i=0;i<S2.length;i++){if(!S2[i].done){cur=i;break}}
+  var sol=0,tot=0;S2.forEach(function(x){sol+=x.solo;tot+=x.n});
+  if(cur<0)return {done:true,sol:sol,tot:tot,stages:R.length};
+  var r=R[cur],s=S2[cur],np=null,lf=null,j;
+  for(j=0;j<r.probs.length;j++){if(!(st[r.probs[j]]&&st[r.probs[j]].solo)){np=r.probs[j];break}}
+  for(j=0;j<r.found.length;j++){if(!ST.learn[r.found[j]]){lf=r.found[j];break}}
+  return {done:false,k:cur,stages:R.length,title:r.title,solo:s.solo,n:s.n,nextProb:np,lesson:lf,sol:sol,tot:tot};
+}
+E.prep.roadNext=roadNext;
+E.prep.drills=function(){return '<div class="pp">'+viewDrill()+'</div>'};
+E.prep.openTrack=function(id){var g=GROUPS.filter(function(x){return x.id===id})[0]||GROUPS[0];ST.tab=ST.gl[g.id]&&g.tabs.some(function(t){return t[0]===ST.gl[g.id]})?ST.gl[g.id]:g.tabs[0][0]};
+E.prep.stats=function(){var a=E.andr||[];return {sd:[Object.keys(ST.done).length,HLD.length],and:[a.filter(function(c){return ST.learn['and:'+c.id]}).length,a.length],drill:Object.keys(ST.sdp.d||{}).length,stories:ST.stories.length}};
 })();
 
 E.tufv={"two-sum": {"vid": "UXDSeD9mN-k", "title": "2 Sum Problem | 2 types of the same problem for Interviews | Brute-Better-Optimal"}, "best-time-to-buy-and-sell-stock": {"vid": "excAOvwF_Wk", "title": "DP 35. Best Time to Buy and Sell Stock | DP on Stocks 🔥"}, "valid-parentheses": {"vid": "wkDfsKijrZ8", "title": "Valid Parentheses | Leetcode"}, "maximum-subarray": {"vid": "AHZpyENo7k4", "title": "Kadane's Algorithm | Maximum Subarray Sum | Finding and Printing"}, "longest-substring-without-repeating-characters": {"vid": "qtVh-XEpsJo", "title": "Longest Substring Without Repeating Characters | Amazon"}, "three-sum": {"vid": "DhFh8Kw7ymk", "title": "3 Sum | Brute -  Better - Optimal with Codes"}, "longest-consecutive-sequence": {"vid": "qgizvmgeyUM", "title": "Longest Consecutive Sequence | Leetcode(Hard) | GooGLe"}, "find-minimum-in-rotated-sorted-array": {"vid": "nhEMDKMB44g", "title": "BS-6. Minimum in Rotated Sorted Array"}, "search-in-rotated-sorted-array": {"vid": "5qGrJbHhqFs", "title": "BS-4. Search Element in Rotated Sorted Array - I"}, "longest-repeating-character-replacement": {"vid": "_eNhaDCr6P0", "title": "L8. Longest Repeating Character Replacement | 2 Pointers and Sliding Window Playlist"}, "minimum-window-substring": {"vid": "WJaij9ffOIY", "title": "L12. Minimum Window Substring | 2 Pointers and Sliding Window Playlist"}, "maximum-product-subarray": {"vid": "hnswaLJvr6g", "title": "Maximum Product Subarray - Best Intuitive Approach Discussed"}, "reverse-linked-list": {"vid": "iRtLEoL-r-g", "title": "Reverse a Linked List | Iterative"}, "merge-two-sorted-lists": {"vid": "jXu-H7XuClE", "title": "L23. Merge two sorted Linked Lists"}, "linked-list-cycle": {"vid": "354J83hX7RI", "title": "Detect a Cycle in Linked List | Amazon | Samsung | Microsoft"}, "remove-nth-node-from-end-of-list": {"vid": "3kMKYQ2wNIU", "title": "L8. Remove Nth Node from the end of the LinkedList | Multiple Approaches"}, "merge-intervals": {"vid": "2JzRBPFYbKE", "title": "Merge Intervals | Leetcode | Problem-6 | Brute-Optimal | C++/Java"}, "insert-interval": {"vid": "xxRE-46OCC8", "title": "L9. Insert Intervals | Greedy Algorithms Playlist"}, "non-overlapping-intervals": {"vid": "HDHQ8lAWakY", "title": "L8. Non Overlapping Intervals | Greedy Algorithms Playlist"}, "set-matrix-zeroes": {"vid": "N0MgLvceX7M", "title": "Set Matrix Zeroes | O(1) Space Approach | Brute - Better - Optimal"}, "spiral-matrix": {"vid": "3Zv-s9UUrFM", "title": "Spiral Traversal of a Matrix | Spiral Matrix"}, "rotate-image": {"vid": "Z0R2u6gd3GU", "title": "Rotate Matrix/Image by 90 Degrees | Brute - Optimal"}, "maximum-depth-of-binary-tree": {"vid": "eD3tmO66aBA", "title": "L14. Maximum Depth in Binary Tree | Height of Binary Tree | C++ | Java"}, "binary-tree-level-order-traversal": {"vid": "EoAsWbO7sqg", "title": "L8. Level Order Traversal of Binary Tree | BFS | C++ | Java"}, "kth-smallest-element-in-a-bst": {"vid": "9TJYWh0adfk", "title": "L45. K-th Smallest/Largest Element in BST"}, "construct-binary-tree-from-preorder-and-inorder-traversal": {"vid": "aZNaLrVebKQ", "title": "L34. Construct a Binary Tree from Preorder and Inorder Traversal | C++ | Java"}, "binary-tree-maximum-path-sum": {"vid": "WszrfSwMz58", "title": "L17. Maximum Path Sum in Binary Tree | C++ | Java"}, "serialize-and-deserialize-binary-tree": {"vid": "-YbXySKJsX8", "title": "L36. Serialize and De-serialize Binary Tree | C++ | Java"}, "merge-k-sorted-lists": {"vid": "1zktEppsdig", "title": "L25. Merge K Sorted Lists | Multiple Approaches"}, "course-schedule": {"vid": "WAOfKpxYHR8", "title": "G-24. Course Schedule I and II | Pre-requisite Tasks | Topological Sort"}, "number-of-connected-components-in-an-undirected-graph": {"vid": "I6v0itcISSY", "title": "Connected Components in Graphs"}, "climbing-stairs": {"vid": "mLfjzJsN8us", "title": "DP 2. Climbing Stairs | Learn How to Write 1D Recurrence Relations"}, "longest-increasing-subsequence": {"vid": "ekcwMsSIzVc", "title": "DP 41. Longest Increasing Subsequence | Memoization"}, "alien-dictionary": {"vid": "U3N_je7tWAs", "title": "G-26. Alien Dictionary - Topological Sort"}, "combination-sum": {"vid": "OyZFFqQtu98", "title": "L8. Combination Sum | Recursion | Leetcode | C++ | Java"}, "lru-cache": {"vid": "xDEuM5qa0zg", "title": "Implement LRU Cache | Leetcode"}, "min-stack": {"vid": "NdDIaH91P0g", "title": "L4. Implement Min Stack | Stack and Queue Playlist"}, "largest-rectangle-in-histogram": {"vid": "X0X6G-eWgQ8", "title": "Largest Rectangle in Histogram | Part - 1 | Leetcode 84"}, "koko-eating-bananas": {"vid": "qyfekrNni90", "title": "BS-12. Koko Eating Bananas"}, "n-queens": {"vid": "i05Ju7AftcM", "title": "L14. N-Queens | Leetcode Hard | Backtracking"}, "partition-equal-subset-sum": {"vid": "7win3dcgo3k", "title": "DP 15. Partition Equal Subset Sum | DP on Subsequences"}, "edit-distance": {"vid": "fJaKO8FbDdo", "title": "DP 33. Edit Distance | Recursive to 1D Array Optimised Solution 🔥"}, "trapping-rain-water": {"vid": "m18Hntz4go8", "title": "Trapping Rainwater | Brute | Better | Optimal | with INTUITION"}, "sliding-window-maximum": {"vid": "CZQGRp93K4k", "title": "Sliding Window Maximum | Leetcode"}, "word-ladder": {"vid": "tRPda0rcf8E", "title": "G-29. Word Ladder - I | Shortest Paths"}, "median-of-two-sorted-arrays": {"vid": "NTop3VTjmxk", "title": "Median of two Sorted Arrays of Different Sizes | Binary Search"}, "lfu-cache": {"vid": "0PSB9y8ehbk", "title": "Imlement LFU Cache | Leetcode(Hard)"}, "burst-balloons": {"vid": "Yz4LlDSlkns", "title": "DP 51. Burst Balloons | Partition DP | Interactive G-Meet Session Update"}, "lowest-common-ancestor-of-a-binary-tree": {"vid": "_-QHfMDde90", "title": "L27. Lowest Common Ancestor in Binary Tree | LCA | C++ | Java"}, "diameter-of-binary-tree": {"vid": "Rezetez59Nk", "title": "L16. Diameter of Binary Tree | C++ | Java"}, "cheapest-flights-within-k-stops": {"vid": "9XybHVqTHcQ", "title": "G-38. Cheapest Flights Within K Stops"}, "path-with-minimum-effort": {"vid": "0ytpZyiZFhA", "title": "G-37. Path With Minimum Effort"}, "number-of-islands-ii": {"vid": "Rn6B-Q4SNyA", "title": "G-51. Number of Islands - II - Online Queries - DSU"}, "candy": {"vid": "IIqVFvKE6RY", "title": "L12. Candy | Slope Approach Intuition Based"}, "combination-sum-ii": {"vid": "G1fRTGRxXU8", "title": "L9. Combination Sum II | Leetcode | Recursion | Java | C++"}, "palindrome-partitioning": {"vid": "WBgsABoClE0", "title": "L17. Palindrome Partitioning | Leetcode | Recursion | C++ | Java"}, "subsets-ii": {"vid": "RIn3gOkbhQE", "title": "L11. Subset Sum II | Leetcode | Recursion"}, "lowest-common-ancestor-of-a-binary-search-tree": {"vid": "cX_kPV_foZc", "title": "L47. LCA in Binary Search Tree"}, "number-of-islands": {"vid": "muncqlKJrH0", "title": "G-8. Number of Islands", "u": 1}, "house-robber": {"vid": "GrMBfJNk_NY", "title": "DP 5. Maximum Sum of Non-Adjacent Elements", "u": 1}, "coin-change": {"vid": "myPeWb3Y68A", "title": "DP 20. Minimum Coins", "u": 1}, "longest-common-subsequence": {"vid": "NPZn9jBrX8U", "title": "DP 25. Longest Common Subsequence", "u": 1}, "best-time-to-buy-and-sell-stock-ii": {"vid": "nGJmxkUJQGs", "title": "DP 36. Buy and Sell Stock - II", "u": 1}, "network-delay-time": {"vid": "V6H1qAeB-l4", "title": "G-32. Dijkstra's Algorithm - Using Priority Queue", "u": 1}};
@@ -14015,7 +14112,7 @@ var root=document.getElementById('app');
 var CHECKS=['Clarified the problem and constraints','Stated the brute force first','Explained why it is slow','Gave time and space complexity','Tested one normal case and one edge case','Talked through my thinking'];
 var FREEZE=['Restate the problem in one sentence and ask one clarifying question.','Write a tiny example and solve it by hand.','Say the brute force out loud, even if it is slow.','Ask what part is slow, then name the pattern that removes it.'];
 
-var S={view:'home',pid:null,tab:'learn',filter:'All',raw:{},inp:{},inputMsg:'',method:null,step:0,cache:{},pred:null,twist:0,tw:{},chk:{},idle:Date.now(),resetArm:false,gn:1000,co:'Any',mock:{mode:'code',phase:'setup',topic:'All',diff:'Any',co:'Any',mins:30,weak:true,pid:null,last:null}};
+var S={view:'dash',back:'dash',prac:'list',pid:null,tab:'learn',filter:'All',raw:{},inp:{},inputMsg:'',method:null,step:0,cache:{},pred:null,twist:0,tw:{},chk:{},idle:Date.now(),resetArm:false,gn:1000,co:'Any',mock:{mode:'code',phase:'setup',topic:'All',diff:'Any',co:'Any',mins:30,weak:true,pid:null,last:null}};
 
 /* ---------- helpers ---------- */
 function prob2(){return E.byId(S.mock.pid)}
@@ -14039,33 +14136,46 @@ function dots(id){
 function setHash(h){try{if(location.hash.replace('#','')!==h)location.hash=h}catch(e){}}
 
 /* ---------- navigation ---------- */
+var HASH={dash:'home',home:'practice',prep:'learn',mock:'mock',growth:'growth'};
+function lastGet(){try{return localStorage.getItem('twistlab.last')||''}catch(e){return ''}}
+function lastSet(id){try{localStorage.setItem('twistlab.last',id)}catch(e){}}
 function openProblem(id){
-  var p=E.byId(id);if(!p)return goHome();
+  var p=E.byId(id);if(!p)return goDash();
+  if(S.view!=='problem')S.back=S.view;
   S.view='problem';S.pid=id;S.tab='learn';S.raw=E.rawOf(p,E.defaults(p));
   S.inp=E.parseAll(p,S.raw).inp;S.inputMsg='';S.inOpen=false;S.cache={};S.method=E.predictMethod(p).id;S.step=0;S.pred=null;S.twist=0;
-  setHash(id);render();window.scrollTo(0,0);
+  lastSet(id);setHash(id);render();window.scrollTo(0,0);
 }
-function goHome(){S.view='home';S.pid=null;setHash('home');render();window.scrollTo(0,0)}
-function goMock(){S.view='mock';S.pid=null;setHash('mock');render();window.scrollTo(0,0)}
-function goPrep(){S.view='prep';S.pid=null;setHash('prep');render();window.scrollTo(0,0)}
-function goGrowth(){S.view='growth';S.pid=null;setHash('growth');render();window.scrollTo(0,0)}
+function goView(v){S.view=v;S.pid=null;setHash(HASH[v]);render();window.scrollTo(0,0)}
+function goDash(){goView('dash')}
+function goPractice(){goView('home')}
+function goMock(){goView('mock')}
+function goPrep(){goView('prep')}
+function goGrowth(){goView('growth')}
+function goBack(){goView(S.back&&S.back!=='problem'?S.back:'home')}
 function fromHash(){
   var h='';try{h=location.hash.replace('#','')}catch(e){}
-  if(h==='growth'){S.view='growth';S.pid=null;render();return}
-  if(h==='mock'){S.view='mock';S.pid=null;render();return}
-  if(h==='prep'){S.view='prep';S.pid=null;render();return}
+  var map={growth:'growth',progress:'growth',mock:'mock',prep:'prep',learn:'prep',practice:'home'};
+  if(map[h]){S.view=map[h];S.pid=null;render();return}
   if(h&&E.byId(h)&&!(S.view==='problem'&&S.pid===h)){openProblem(h);return}
-  if(!h||h==='home'){if(S.view!=='home'){S.view='home';S.pid=null}render()}
+  if(!h||h==='home'){if(S.view!=='dash'){S.view='dash';S.pid=null}render()}
 }
 
 /* ---------- shared renderers ---------- */
+var TABS=[['dash','Home','<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'],
+  ['prep','Learn','<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 19V5"/><path d="M9 7h6"/>'],
+  ['home','Practice','<path d="M9 6l-4 4 4 4M15 18l4-4-4-4"/><path d="M13 5l-2 14"/>'],
+  ['mock','Mock','<circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/>'],
+  ['growth','Progress','<path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/>']];
+var TACT={dash:'dash',prep:'prep',home:'practice',mock:'mock',growth:'growth'};
 function barHtml(){
-  var home=S.view==='home'||S.view==='problem';
-  return '<div class="bar"><div class="wrap"><button class="brand" data-act="home" type="button">Interview Twist Lab</button><div class="navs">'+
-    '<button class="nbtn" data-act="home" type="button" aria-current="'+home+'">Problems</button>'+
-    '<button class="nbtn" data-act="mock" type="button" aria-current="'+(S.view==='mock')+'">Mock</button>'+
-    '<button class="nbtn" data-act="prep" type="button" aria-current="'+(S.view==='prep')+'">Prep</button>'+
-    '<button class="nbtn" data-act="growth" type="button" aria-current="'+(S.view==='growth')+'">Growth</button></div></div></div>';
+  return '<div class="bar"><div class="wrap"><button class="brand" data-act="dash" type="button"><span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M12 7v11"/><path d="M8 18c2 1 6 1 8-1" opacity=".6"/></svg></span><span>Interview Twist Lab</span></button></div></div>';
+}
+function tabbarHtml(){
+  var cur=S.view==='problem'?(S.back||'home'):S.view;
+  return '<nav class="tabbar" aria-label="Main"><div class="wrap">'+TABS.map(function(t){
+    return '<button class="tbtn" type="button" data-act="'+TACT[t[0]]+'" aria-current="'+(cur===t[0])+'"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+t[2]+'</svg><span>'+t[1]+'</span></button>';
+  }).join('')+'</div></nav>';
 }
 function panelsHtml(panels){
   return '<div class="viz">'+panels.map(function(p){
@@ -14160,8 +14270,10 @@ function viewHome(){
   var topics=['All'].concat(E.topicOrder.filter(function(t){return ps.some(function(p){return p.topic===t})}));
   var list=ps.filter(function(p){return (S.filter==='All'||p.topic===S.filter)&&(S.co==='Any'||coOf(p,S.co))});if(S.co!=='Any')list=list.slice().sort(function(a,b){return coOf(b,S.co)[0]-coOf(a,S.co)[0]});
   var full=ps.filter(function(p){return dots(p.id).every(Boolean)}).length,solo=ps.filter(function(p){return recOf(p.id).solo}).length;
-  return '<div><p class="eyebrow">DSA interview practice</p><h1>Solve it, then survive the follow-ups</h1>'+
-    '<p class="sub">Each problem has four steps: learn the idea, watch it run on your own input, predict the next move, then handle the interviewer\'s twists. '+n+' classic interview problems: the Blind 75 style core, high-frequency extras and a systems track.'+'</p></div>'+
+  var seg='<div class="seg" role="group" aria-label="Practice type"><button type="button" class="chip'+(S.prac==='list'?' on':'')+'" data-act="prac" data-v="list">Problems ('+n+')</button><button type="button" class="chip'+(S.prac==='drills'?' on':'')+'" data-act="prac" data-v="drills">System design drills</button></div>';
+  if(S.prac==='drills')return '<div><p class="eyebrow">Practice</p><h1>System design drills</h1><p class="sub">Estimate the numbers, make the decisions, then name what breaks first. Read the matching design on the Learn tab if you are new to a topic.</p></div>'+seg+E.prep.drills();
+  return '<div><p class="eyebrow">Practice</p><h1>Solve it, then survive the follow-ups</h1>'+
+    '<p class="sub">Each problem has four steps: learn the idea, watch it run on your own input, predict the next move, then handle the interviewer\'s twists. '+n+' classic interview problems: the Blind 75 style core, high-frequency extras and a systems track.'+'</p></div>'+seg+
     '<div class="card"><div class="row" style="justify-content:space-between"><span class="label">Progress</span><span class="stat">'+full+' of '+n+' complete · '+solo+' solved myself</span></div>'+
     '<div class="legend"><span><span class="dot on"></span> ran it</span><span><span class="dot on"></span> finished predict</span><span><span class="dot on"></span> opened 2+ twists</span></div></div>'+
     weakCard()+
@@ -14173,8 +14285,7 @@ function viewHome(){
         '<span class="d"><span class="dots" aria-label="progress">'+d.map(function(x){return '<span class="dot'+(x?' on':'')+'"></span>'}).join('')+'</span><span class="pill '+diffCls(p.diff)+'">'+esc(p.diff)+'</span></span>'+
         '<span class="m">'+esc(p.topic)+' · '+esc(p.pattern)+(S.co!=='Any'?' · '+esc(S.co)+' '+coOf(p,S.co)[0]+(coOf(p,S.co)[1]<=2?' ●':''):'')+'</span></button>';
     }).join('')+'</div>'+
-    '<div class="row"><button class="btn ghost" data-act="resetprog" type="button">'+(S.resetArm?'Tap again to erase progress':'Reset progress')+'</button>'+
-    '<span class="hint">Progress is saved in this browser only.</span></div>';
+    '';
 }
 
 
@@ -14221,7 +14332,7 @@ function practiceRow(p){
 /* ---------- problem shell ---------- */
 function viewProblem(){
   var p=prob(),tabs=[['learn','Learn'],['run','Run'],['predict','Predict'],['twists','Twists']];
-  return '<button class="back" data-act="home" type="button">← All problems</button>'+
+  return '<button class="back" data-act="back" type="button">← '+({dash:'Home',prep:'Learn',home:'Practice',mock:'Mock',growth:'Progress'}[S.back]||'Practice')+'</button>'+
     '<div><p class="eyebrow">'+esc(p.topic)+' · '+esc(p.ref)+'</p><h1>'+esc(p.title)+'</h1><div class="row" style="margin-top:8px"><span class="pill '+diffCls(p.diff)+'">'+esc(p.diff)+'</span><span class="stat">Pattern: '+esc(p.pattern)+'</span></div>'+practiceRow(p)+toolRow(p)+coRow(p)+'</div>'+
     '<div class="tabs" role="tablist" aria-label="Steps">'+tabs.map(function(t){return '<button class="tab" role="tab" data-act="tab" data-t="'+t[0]+'" aria-selected="'+(S.tab===t[0])+'" type="button">'+t[1]+'</button>'}).join('')+'</div>'+
     '<div class="panel" id="pbody">'+tabHtml(p)+'</div>';
@@ -14542,8 +14653,51 @@ function fmtTime(s){
   if(s<3600)return Math.round(s/60)+' min';if(s<86400)return (s/3600).toFixed(1)+' hours';
   if(s<31536000)return Math.round(s/86400)+' days';return (s/31536000).toFixed(1)+' years';
 }
+function viewDash(){
+  var ps=E.problems,n=ps.length,solo=ps.filter(function(p){return recOf(p.id).solo}).length;
+  var rn=E.prep.roadNext(),ps2=E.prep.stats(),lid=lastGet(),lp=lid&&E.byId(lid);
+  var pct=Math.round(100*solo/n),C=2*Math.PI*30,off=(C*(1-solo/n)).toFixed(1);
+  var h='<section class="hero"><div class="hero-t"><p class="eyebrow">Today</p><h1>Your next step</h1><p class="sub">Learn a stage, solve its problems yourself, then test yourself in a mock interview.</p></div>'+
+    '<div class="ring" role="img" aria-label="'+solo+' of '+n+' problems solved myself"><svg viewBox="0 0 76 76" width="76" height="76"><circle cx="38" cy="38" r="30" fill="none" stroke="currentColor" stroke-opacity=".25" stroke-width="7"/><circle cx="38" cy="38" r="30" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off+'" transform="rotate(-90 38 38)"/></svg><b>'+pct+'%</b><span>solved</span></div></section>';
+  if(lp)h+='<div class="card"><span class="label">Continue where you left off</span><div class="row" style="justify-content:space-between"><b>'+esc(lp.title)+'</b><span class="pill '+diffCls(lp.diff)+'">'+esc(lp.diff)+'</span></div><p class="hint">'+esc(lp.topic)+' · '+esc(lp.pattern)+'</p><div class="row"><button class="btn primary" data-act="open" data-id="'+lp.id+'" type="button">Open problem</button></div></div>';
+  if(rn.done){
+    h+='<div class="card"><span class="label">DSA study plan</span><p><b>All '+rn.stages+' stages done.</b> Keep your edge with mocks and the weak list.</p></div>';
+  }else{
+    h+='<div class="card"><span class="label">Next in your DSA study plan</span><div><b>Stage '+(rn.k+1)+' of '+rn.stages+': '+esc(rn.title)+'</b></div>'+
+      '<div class="pp-meter" role="img" aria-label="'+rn.solo+' of '+rn.n+' solved"><i style="width:'+Math.round(100*rn.solo/rn.n)+'%"></i></div>'+
+      '<p class="hint">'+rn.solo+' of '+rn.n+' problems solved by yourself in this stage.</p><div class="row">'+
+      (rn.lesson?'<button class="btn" data-act="tolesson" data-id="'+rn.lesson+'" type="button">Read the lesson</button>':'')+
+      (rn.nextProb?'<button class="btn primary" data-act="open" data-id="'+rn.nextProb+'" type="button">Solve: '+esc(E.byId(rn.nextProb).title)+'</button>':'')+
+      '<button class="btn ghost" data-act="track" data-g="dsa" type="button">See the whole study plan</button></div></div>';
+  }
+  h+=weakCard();
+  h+='<div><span class="label">Your tracks</span></div><div class="tracks">'+
+    '<button class="track" data-act="track" data-g="dsa" type="button"><span class="ti t-dsa"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6l-5 6 5 6M16 6l5 6-5 6"/></svg></span><b>DSA</b><span>'+solo+' of '+n+' problems solved myself</span></button>'+
+    '<button class="track" data-act="track" data-g="sd" type="button"><span class="ti t-sd"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><path d="M7 7h.01M7 17h.01"/></svg></span><b>System design</b><span>'+ps2.sd[0]+' of '+ps2.sd[1]+' designs done</span></button>'+
+    '<button class="track" data-act="track" data-g="and" type="button"><span class="ti t-and"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></svg></span><b>Android / AAOS</b><span>'+ps2.and[0]+' of '+ps2.and[1]+' cards learned</span></button>'+
+    '<button class="track" data-act="track" data-g="bp" type="button"><span class="ti t-bp"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/></svg></span><b>Behavioral and plan</b><span>'+ps2.stories+' stor'+(ps2.stories===1?'y':'ies')+' written</span></button></div>'+
+    '<div class="card"><span class="label">Test yourself</span><p class="hint">A timed mock round: coding, system design or behavioral.</p><div class="row"><button class="btn" data-act="mock" type="button">Start a mock</button><button class="btn ghost" data-act="practice" type="button">Browse all problems</button></div></div>';
+  return h;
+}
+function viewProgress(){
+  var ps=E.problems,tops=E.topicOrder.filter(function(t){return ps.some(function(p){return p.topic===t})});
+  var tot=ps.length,solo=ps.filter(function(p){return recOf(p.id).solo}).length,full=ps.filter(function(p){return dots(p.id).every(Boolean)}).length;
+  var rn=E.prep.roadNext();
+  var h='<div><p class="eyebrow">Progress</p><h1>How you are doing</h1></div>'+
+    '<div class="card"><div class="row" style="justify-content:space-between"><span class="label">Overall</span><span class="stat">'+full+' of '+tot+' complete · '+solo+' solved myself</span></div>'+
+    '<div class="pp-meter" role="img" aria-label="'+solo+' of '+tot+' solved myself"><i style="width:'+Math.round(100*solo/tot)+'%"></i></div>'+
+    '<p class="hint">'+(rn.done?'Study plan complete.':'Study plan: stage '+(rn.k+1)+' of '+rn.stages+', '+esc(rn.title)+'.')+'</p></div>'+
+    weakCard()+
+    '<div class="card"><span class="label">By topic (solved myself)</span><div class="bars">'+tops.map(function(t){
+      var l=ps.filter(function(p){return p.topic===t}),s2=l.filter(function(p){return recOf(p.id).solo}).length;
+      return '<div class="barline"><div class="nm"><span>'+esc(t)+'</span><span>'+s2+' / '+l.length+'</span></div><div class="pp-meter"><i style="width:'+Math.round(100*s2/l.length)+'%"></i></div></div>';
+    }).join('')+'</div></div>'+
+    '<div class="row"><button class="btn ghost" data-act="resetprog" type="button">'+(S.resetArm?'Tap again to erase progress':'Reset progress')+'</button><span class="hint">Progress is saved on this device only.</span></div>'+
+    viewGrowth();
+  return h;
+}
 function viewGrowth(){
-  return '<div><p class="eyebrow">Complexity, felt instead of calculated</p><h1>Growth Playground</h1><p class="sub">Drag the slider and watch how the work grows for four common growth types. Times assume a computer doing 100 million simple steps per second.</p></div>'+
+  return '<div><p class="eyebrow">Complexity, felt instead of calculated</p><h2 class="sech">Complexity playground</h2><p class="sub">Drag the slider and watch how the work grows for four common growth types. Times assume a computer doing 100 million simple steps per second.</p></div>'+
     '<section class="card" aria-label="Input size"><div class="label">Input size n</div><div class="nbig" id="gnOut" aria-live="polite"></div>'+
     '<input id="gnRange" type="range" min="10" max="70" step="1" value="'+Math.round(Math.log10(S.gn)*10)+'" aria-label="Input size n, from 10 to 10 million">'+
     '<div class="scale"><span>10</span><span>1K</span><span>100K</span><span>10M</span></div>'+
@@ -14571,8 +14725,8 @@ function setGn(v){S.gn=Math.max(10,Math.min(1e7,Math.round(v)));var r=$('#gnRang
 
 /* ---------- render ---------- */
 function render(){
-  var body=S.view==='home'?viewHome():S.view==='growth'?viewGrowth():S.view==='mock'?viewMock():S.view==='prep'?E.prep.view():viewProblem();
-  root.innerHTML=barHtml()+'<main><div class="wrap">'+body+'</div></main>';
+  var body=S.view==='dash'?viewDash():S.view==='home'?viewHome():S.view==='growth'?viewProgress():S.view==='mock'?viewMock():S.view==='prep'?E.prep.view():viewProblem();
+  root.innerHTML=barHtml()+'<main><div class="wrap">'+body+'</div></main>'+tabbarHtml();
   after();
 }
 function after(){
@@ -14592,6 +14746,12 @@ document.addEventListener('click',function(e){
   if(S.view==='problem'&&S.tab==='twists')S.idle=Date.now();
   if(a==='mock')return goMock();
   if(a==='prep')return goPrep();
+  if(a==='dash')return goDash();
+  if(a==='practice')return goPractice();
+  if(a==='back')return goBack();
+  if(a==='prac'){S.prac=b.dataset.v;return render()}
+  if(a==='track'){E.prep.openTrack(b.dataset.g);return goPrep()}
+  if(a==='tolesson'){E.prep.openFound(b.dataset.id);return goPrep()}
   if(a==='tool'){E.prep.openTool(b.dataset.t);return goPrep()}
   if(a==='mmode'){S.mock.mode=b.dataset.m;S.mock.mins=b.dataset.m==='sd'?45:b.dataset.m==='beh'?10:30;S.mock.msg='';return render()}
   if(a==='mtopic'){S.mock.topic=b.dataset.t;return render()}
@@ -14606,7 +14766,7 @@ document.addEventListener('click',function(e){
   if(a==='msave')return S.mock.mode==='code'?mockSave():mockSaveP();
   if(a==='mpreview'){S.mock.rev=true;return render()}
   if(a==='mnew'){S.mock.phase='setup';return render()}
-  if(a==='home')return goHome();
+  if(a==='home')return goPractice();
   if(a==='growth')return goGrowth();
   if(a==='codeoff'){S.codeOff=true;return fillRun()}
   if(a==='codeon'){S.codeOff=false;return fillRun()}
